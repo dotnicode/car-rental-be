@@ -1,8 +1,8 @@
 {
-  "name": "rent-a-car-be",
+  "name": "car-rental-be",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "A scalable solution for car rental management, streamlining user bookings, document verification, and fleet operations through a web-based platform.",
+  "author": "dotnicode",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
