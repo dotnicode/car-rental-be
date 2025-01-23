@@ -4,6 +4,8 @@ import * as Joi from 'joi';
 
 interface Envs {
   PORT: number;
+  HOST: string;
+  DATABASE_PORT: number;
   POSTGRES_PASSWORD: string;
   POSTGRES_USER: string;
   POSTGRES_DB: string;
@@ -11,6 +13,8 @@ interface Envs {
 
 const envsSchema = Joi.object<Envs>({
   PORT: Joi.number().required(),
+  HOST: Joi.string().required(),
+  DATABASE_PORT: Joi.number().required(),
   POSTGRES_PASSWORD: Joi.string().required(),
   POSTGRES_USER: Joi.string().required(),
   POSTGRES_DB: Joi.string().required(),
@@ -23,4 +27,5 @@ const validation = envsSchema.validate({
 if (validation.error)
   throw new Error(`Config validation error: ${validation.error.message}`);
 
+console.log(validation.value);
 export const envs = validation.value;
