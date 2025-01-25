@@ -27,5 +27,4 @@ const validation = envsSchema.validate({
 if (validation.error)
   throw new Error(`Config validation error: ${validation.error.message}`);
 
-console.log(validation.value);
 export const envs = validation.value;
