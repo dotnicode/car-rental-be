@@ -31,7 +31,7 @@ export class CarService {
   }
 
   async findAll() {
-    return await this.carRepository.find();
+    return await this.carRepository.find({ relations: { pictures: true } });
   }
 
   async findOne(
