@@ -9,6 +9,11 @@ interface Envs {
   POSTGRES_PASSWORD: string;
   POSTGRES_USER: string;
   POSTGRES_DB: string;
+  AWS_REGION: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+  AWS_BUCKET_NAME: string;
+  AWS_ENDPOINT: string;
 }
 
 const envsSchema = Joi.object<Envs>({
@@ -18,6 +23,11 @@ const envsSchema = Joi.object<Envs>({
   POSTGRES_PASSWORD: Joi.string().required(),
   POSTGRES_USER: Joi.string().required(),
   POSTGRES_DB: Joi.string().required(),
+  AWS_REGION: Joi.string().required(),
+  AWS_ACCESS_KEY_ID: Joi.string().required(),
+  AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+  AWS_BUCKET_NAME: Joi.string().required(),
+  AWS_ENDPOINT: Joi.string().required(),
 }).unknown(true);
 
 const validation = envsSchema.validate({

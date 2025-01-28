@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -10,6 +10,11 @@ import { Car } from './entities/car.entity';
 import { CarNotFoundException } from './exceptions/car-not-found.exception';
 import { Picture } from './entities/picture.entity';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
+import { UploadPictureDto } from './dto/upload-picture.dto';
+import { S3ConfigProvider } from './providers/s3.provider';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { randomUUID } from 'crypto';
+import { uploadPicture } from './utils/upload-picture';
 
 @Injectable()
 export class CarService {
@@ -29,17 +34,20 @@ export class CarService {
     return await this.carRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(
+    id: number,
+    relations: FindOptionsRelations<Car> = { pictures: true },
+  ) {
     try {
-      const car = await this.carRepository.findOne({ where: { id } });
-      if (!car) {
-        throw new CarNotFoundException(id);
-      }
+      const car = await this.carRepository.findOne({
+        where: { id },
+        relations,
+      });
+      if (!car) throw new CarNotFoundException(id);
+
       return car;
     } catch (error) {
-      if (error instanceof CarNotFoundException) {
-        throw error;
-      }
+      if (error instanceof CarNotFoundException) throw error;
       throw new DatabaseException('Error accessing database');
     }
   }
@@ -52,5 +60,43 @@ export class CarService {
   async remove(id: number) {
     await this.carRepository.delete(id);
     return { message: `Car #${id} deleted successfully` };
+  }
+
+  /*
+   * Picture management
+   */
+
+  async uploadCarPicture(
+    carId: number,
+    file: Express.Multer.File,
+    uploadPictureDto: UploadPictureDto,
+  ) {
+    const car = await this.findOne(carId, { pictures: false });
+    const existingPicture = await this.pictureRepository.findOne({
+      where: {
+        car: { id: carId },
+        type: uploadPictureDto.type,
+      },
+    });
+    const uploadedPicture = await uploadPicture(file);
+
+    const picture = existingPicture
+      ? existingPicture
+      : Object.assign(new Picture(), { car });
+    picture.src = uploadedPicture.imageUrl;
+    picture.description = uploadPictureDto.description;
+    picture.title = uploadPictureDto.title ?? file.originalname;
+    picture.type = uploadPictureDto.type;
+    picture.date = uploadPictureDto.date;
+
+    const savedPicture = await this.pictureRepository.save(picture);
+
+    return {
+      message: existingPicture
+        ? 'Picture updated successfully'
+        : 'Picture uploaded successfully',
+      picture: savedPicture,
+      car,
+    };
   }
 }
