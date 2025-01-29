@@ -1,8 +1,26 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  MaxFileSizeValidator,
+  Param,
+  ParseFilePipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadPictureDto } from './dto/upload-picture.dto';
+import { plainToInstance } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
 
 @Controller('car')
 export class CarController {
@@ -34,5 +52,34 @@ export class CarController {
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return await this.carService.remove(+id);
+  }
+
+  /*
+   * Picture management
+   */
+
+  @Post(':id/picture')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadCarPicture(
+    @Param('id', ParseIntPipe) carId: number,
+    @UploadedFile(
+      new ParseFilePipe({
+        // Maximo de 5MB
+        validators: [new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 })],
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() uploadPictureDto: UploadPictureDto,
+  ) {
+    const plainUploadPictureDto = plainToInstance(
+      UploadPictureDto,
+      uploadPictureDto,
+    );
+    const errors: ValidationError[] = await validate(plainUploadPictureDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors.map((e) => e.constraints));
+    }
+
+    return this.carService.uploadCarPicture(carId, file, plainUploadPictureDto);
   }
 }

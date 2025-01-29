@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { Car } from './entities/car.entity';
+import { Car } from '../entities/car.entity';
 
 export const CAR_REPOSITORY = 'CAR_REPOSITORY';
 

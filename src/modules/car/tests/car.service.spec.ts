@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DatabaseException } from '../../../common/exceptions/database.exception';
-import { CAR_REPOSITORY } from '../car.provider';
+import { CAR_REPOSITORY } from '../providers/car.provider';
 import { CarService } from '../car.service';
 import { Car } from '../entities/car.entity';
 import { CarNotFoundException } from '../exceptions/car-not-found.exception';
