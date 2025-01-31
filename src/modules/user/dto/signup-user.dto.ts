@@ -6,6 +6,7 @@ import {
   IsDateString,
   MinLength,
   IsOptional,
+  Matches,
 } from 'class-validator';
 import { Role } from '../enums/user-role.enum';
 
@@ -26,8 +27,10 @@ export class SignUpUserDto {
   @IsEmail()
   email: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,}$/,
+    { message: 'invalid password' },
+  )
   password: string;
 
   @IsString()
