@@ -8,6 +8,7 @@ import { CarService } from '../car.service';
 import { Car } from '../entities/car.entity';
 import { CarNotFoundException } from '../exceptions/car-not-found.exception';
 import { CreateCarDto } from '../dto/create-car.dto';
+import { PICTURE_REPOSITORY } from '../providers/picture.provider';
 
 describe('CarService', () => {
   let service: CarService;
@@ -35,6 +36,12 @@ describe('CarService', () => {
     delete: jest.fn(),
   };
 
+  const mockPictureRepository = {
+    save: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -42,6 +49,10 @@ describe('CarService', () => {
         {
           provide: CAR_REPOSITORY,
           useValue: mockCarRepository,
+        },
+        {
+          provide: PICTURE_REPOSITORY,
+          useValue: mockPictureRepository,
         },
       ],
     }).compile();
@@ -91,7 +102,28 @@ describe('CarService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a car if found', async () => {
+    it('should return a car if found with its pictures', async () => {
+      const carId = 1;
+      const expectedCar = {
+        id: carId,
+        brand: 'Toyota',
+        model: 'Corolla',
+        year: 2022,
+        pictures: [],
+      };
+
+      mockCarRepository.findOne.mockResolvedValue(expectedCar);
+
+      const result = await service.findOne(carId, { pictures: true });
+
+      expect(result).toEqual(expectedCar);
+      expect(mockCarRepository.findOne).toHaveBeenCalledWith({
+        where: { id: carId },
+        relations: { pictures: true },
+      });
+    });
+
+    it('should return a car without pictures when relations is set to false', async () => {
       const carId = 1;
       const expectedCar = {
         id: carId,
@@ -102,11 +134,12 @@ describe('CarService', () => {
 
       mockCarRepository.findOne.mockResolvedValue(expectedCar);
 
-      const result = await service.findOne(carId);
+      const result = await service.findOne(carId, { pictures: false });
 
       expect(result).toEqual(expectedCar);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
+        relations: { pictures: false },
       });
     });
 
@@ -150,6 +183,7 @@ describe('CarService', () => {
       );
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
+        relations: { pictures: true },
       });
     });
   });
