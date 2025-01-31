@@ -15,10 +15,14 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3
+      - SERVICES=s3,sts
       - DEFAULT_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
       - DEBUG=1
+      - EDGE_PORT=4566
     volumes:
       - "./docker/localstack:/docker-entrypoint-initaws.d"
