@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { USER_REPOSITORY } from './providers/user.provider';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { SignInDto } from './dto/signin-user-dto';
+import { SignInUserDto } from './dto/signin-user-dto';
 import { RecoverUserPasswordDto } from './dto/recover-user-password.dto';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class UserService {
     return await this.userRepository.save(createUserDto);
   }
 
-  async signin(signInDto: SignInDto): Promise<User> {
+  async signin(signInDto: SignInUserDto): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email: signInDto.email, password: signInDto.password },
     });
