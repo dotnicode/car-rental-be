@@ -1,0 +1,586 @@
+{
+  "Users": {
+    "Tyrel59@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "0cd534f0-0b41-487d-ad57-238aa1692ef6"
+        },
+        {
+          "Name": "name",
+          "Value": "Rory Breitenberg"
+        },
+        {
+          "Name": "dob",
+          "Value": "1991-09-10T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "New Mexico Carsonhaven Adams County 2945 W 5th Street Suite 692"
+        },
+        {
+          "Name": "country",
+          "Value": "Montenegro"
+        },
+        {
+          "Name": "role",
+          "Value": "admin"
+        }
+      ],
+      "Enabled": true,
+      "Password": "OESk26wer6J4ZFf!",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T19:13:51.357Z",
+      "UserLastModifiedDate": "2025-02-01T19:13:51.357Z",
+      "Username": "Tyrel59@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "247833"
+    },
+    "Jaron_Hammes@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "20428445-33f3-4b13-b763-c32dd5986a72"
+        },
+        {
+          "Name": "name",
+          "Value": "Marty Windler"
+        },
+        {
+          "Name": "dob",
+          "Value": "2008-02-07T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "Alabama New Hopecester Morgan County 795 Runte Shoal Suite 212"
+        },
+        {
+          "Name": "country",
+          "Value": "Argentina"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "2ljr%)lx'PxCk",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:10:41.423Z",
+      "UserLastModifiedDate": "2025-02-01T20:10:41.423Z",
+      "Username": "Jaron_Hammes@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "233817"
+    },
+    "Colin_Brakus@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "12e6cd85-b592-4c6e-bc11-018b9f98e1ca"
+        },
+        {
+          "Name": "name",
+          "Value": "Burnice Hoppe"
+        },
+        {
+          "Name": "dob",
+          "Value": "2002-03-09T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "South Carolina West Pansyshire Calhoun County 2799 Clark Street Apt. 882"
+        },
+        {
+          "Name": "country",
+          "Value": "Pakistan"
+        },
+        {
+          "Name": "role",
+          "Value": "admin"
+        }
+      ],
+      "Enabled": true,
+      "Password": "Iq)9vaJdWV6*,^I#",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:11:18.145Z",
+      "UserLastModifiedDate": "2025-02-01T20:11:18.145Z",
+      "Username": "Colin_Brakus@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "803777"
+    },
+    "Tre44@yahoo.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "0bf300eb-de8c-40df-8588-aa5cfb33a7f0"
+        },
+        {
+          "Name": "name",
+          "Value": "Adrienne Tremblay"
+        },
+        {
+          "Name": "dob",
+          "Value": "1971-02-23T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "Indiana South Torrey Calhoun County 490 Rodriguez Ramp Suite 516"
+        },
+        {
+          "Name": "country",
+          "Value": "Marshall Islands"
+        },
+        {
+          "Name": "role",
+          "Value": "admin"
+        }
+      ],
+      "Enabled": true,
+      "Password": "=kU&!7#x0%W+q^I?zk",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:11:37.692Z",
+      "UserLastModifiedDate": "2025-02-01T20:11:37.692Z",
+      "Username": "Tre44@yahoo.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "248470"
+    },
+    "Emilie98@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "014c58f3-cae2-4e5e-a152-f0eb7f5f2e5b"
+        },
+        {
+          "Name": "name",
+          "Value": "Louisa Ratke"
+        },
+        {
+          "Name": "dob",
+          "Value": "2022-05-23T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "South Dakota Bruentown Crawford County 934 S 7th Street Apt. 435"
+        },
+        {
+          "Name": "country",
+          "Value": "Peru"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "y>P1)(k#&Th",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:12:14.209Z",
+      "UserLastModifiedDate": "2025-02-01T20:12:14.209Z",
+      "Username": "Emilie98@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "349655"
+    },
+    "Darrion.Kutch41@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "fffc271a-4aa0-41cb-8939-fe77776224b6"
+        },
+        {
+          "Name": "name",
+          "Value": "Chanelle Jakubowski"
+        },
+        {
+          "Name": "dob",
+          "Value": "1968-10-24T00:00:00.000Z"
+        },
+        {
+          "Name": "address",
+          "Value": "Hawaii Larissaboro Adams County 69632 Angelina Walks Apt. 592"
+        },
+        {
+          "Name": "country",
+          "Value": "Micronesia"
+        },
+        {
+          "Name": "role",
+          "Value": "admin"
+        }
+      ],
+      "Enabled": true,
+      "Password": "(K*p)1tVqGg<BoBMbD",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:16:00.067Z",
+      "UserLastModifiedDate": "2025-02-01T20:16:00.067Z",
+      "Username": "Darrion.Kutch41@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "505589"
+    },
+    "Amari.Anderson9@gmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "61b01669-4177-4622-bc40-af08e18abbec"
+        },
+        {
+          "Name": "fullname",
+          "Value": "Chase Emard-Dicki"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "&5@<L9J)VfpUcw",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:24:03.821Z",
+      "UserLastModifiedDate": "2025-02-01T20:24:03.821Z",
+      "Username": "Amari.Anderson9@gmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "386133"
+    },
+    "Hillary87@gmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "f7988377-434d-4feb-adf3-85ab313ebc29"
+        },
+        {
+          "Name": "fullname",
+          "Value": "Mohammed Ruecker-Will"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "d12VQR=E2|T+Ell<;i",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:25:39.649Z",
+      "UserLastModifiedDate": "2025-02-01T20:25:39.649Z",
+      "Username": "Hillary87@gmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "387742"
+    },
+    "Lauriane42@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "fb82f870-7a82-4ca4-8578-462198b16aac"
+        },
+        {
+          "Name": "fullname",
+          "Value": "Glenna Terry"
+        },
+        {
+          "Name": "role",
+          "Value": "admin"
+        }
+      ],
+      "Enabled": true,
+      "Password": "tjmm)G?<1u",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:28:10.491Z",
+      "UserLastModifiedDate": "2025-02-01T20:28:10.491Z",
+      "Username": "Lauriane42@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "254885"
+    },
+    "Penelope_Thompson@hotmail.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "2416e0cb-dc9d-4da9-8b34-6d7d89c461fc"
+        },
+        {
+          "Name": "fullname",
+          "Value": "Mallie Konopelski"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "SG6?ugj0^#es",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:28:57.925Z",
+      "UserLastModifiedDate": "2025-02-01T20:28:57.925Z",
+      "Username": "Penelope_Thompson@hotmail.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "987998"
+    },
+    "Marguerite_Emard@yahoo.com": {
+      "Attributes": [
+        {
+          "Name": "sub",
+          "Value": "f7a8ea04-cd5a-44ca-925c-9b5d69fb020b"
+        },
+        {
+          "Name": "fullname",
+          "Value": "Bridie Walker"
+        },
+        {
+          "Name": "role",
+          "Value": "client"
+        }
+      ],
+      "Enabled": true,
+      "Password": "1|rE2x#3",
+      "RefreshTokens": [],
+      "UserCreateDate": "2025-02-01T20:37:30.342Z",
+      "UserLastModifiedDate": "2025-02-01T20:37:30.342Z",
+      "Username": "Marguerite_Emard@yahoo.com",
+      "UserStatus": "UNCONFIRMED",
+      "ConfirmationCode": "744221"
+    }
+  },
+  "Options": {
+    "Policies": {
+      "PasswordPolicy": {
+        "MinimumLength": 8,
+        "RequireUppercase": true,
+        "RequireLowercase": true,
+        "RequireNumbers": true,
+        "RequireSymbols": true,
+        "TemporaryPasswordValidityDays": 7
+      }
+    },
+    "LambdaConfig": {},
+    "SchemaAttributes": [
+      {
+        "Name": "sub",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": false,
+        "Required": true,
+        "StringAttributeConstraints": {
+          "MinLength": "1",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "name",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "given_name",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "family_name",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "middle_name",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "nickname",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "preferred_username",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "profile",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "picture",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "website",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "email",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "email_verified",
+        "AttributeDataType": "Boolean",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false
+      },
+      {
+        "Name": "gender",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "birthdate",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "10",
+          "MaxLength": "10"
+        }
+      },
+      {
+        "Name": "zoneinfo",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "locale",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "phone_number",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "phone_number_verified",
+        "AttributeDataType": "Boolean",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false
+      },
+      {
+        "Name": "address",
+        "AttributeDataType": "String",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "StringAttributeConstraints": {
+          "MinLength": "0",
+          "MaxLength": "2048"
+        }
+      },
+      {
+        "Name": "updated_at",
+        "AttributeDataType": "Number",
+        "DeveloperOnlyAttribute": false,
+        "Mutable": true,
+        "Required": false,
+        "NumberAttributeConstraints": {
+          "MinValue": "0"
+        }
+      }
+    ],
+    "VerificationMessageTemplate": {
+      "DefaultEmailOption": "CONFIRM_WITH_CODE"
+    },
+    "MfaConfiguration": "OFF",
+    "EstimatedNumberOfUsers": 0,
+    "EmailConfiguration": {
+      "EmailSendingAccount": "COGNITO_DEFAULT"
+    },
+    "AdminCreateUserConfig": {
+      "AllowAdminCreateUserOnly": false,
+      "UnusedAccountValidityDays": 7
+    },
+    "UsernameAttributes": [
+      "email"
+    ],
+    "Arn": "arn:aws:cognito-idp:local:local:userpool/local_4mTITs2N",
+    "CreationDate": "2025-02-01T16:42:12.639Z",
+    "Id": "local_4mTITs2N",
+    "LastModifiedDate": "2025-02-01T16:42:12.639Z",
+    "Name": "car-rental"
+  }
+}

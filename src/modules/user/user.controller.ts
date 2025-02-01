@@ -17,29 +17,26 @@ import { AwsCognitoService } from './aws-cognito.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly awsCognitoService: AwsCognitoService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('signup')
   signup(@Body() createUserDto: SignUpUserDto) {
-    return this.awsCognitoService.signupUser(createUserDto);
+    return this.userService.signup(createUserDto);
   }
 
   @Post('signin')
   signin(@Body() signinDto: SignInUserDto) {
-    return this.awsCognitoService.signinUser(signinDto);
+    return this.userService.signin(signinDto);
   }
 
   @Post('recover-password')
   recoverPassword(@Body() recoverPasswordDto: RecoverUserPasswordDto) {
-    return this.awsCognitoService.recoverPassword(recoverPasswordDto);
+    return this.userService.recoverPassword(recoverPasswordDto);
   }
 
   @Post('logout')
   logout() {
-    return this.awsCognitoService.logout();
+    return this.userService.logout();
   }
 
   @Get()

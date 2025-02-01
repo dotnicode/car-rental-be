@@ -7,8 +7,13 @@ import {
   MinLength,
   IsOptional,
   Matches,
+  isStrongPassword,
+  IsStrongPassword,
+  IsDate,
 } from 'class-validator';
 import { Role } from '../enums/user-role.enum';
+import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class SignUpUserDto {
   @IsString()
@@ -20,17 +25,20 @@ export class SignUpUserDto {
   @MinLength(2)
   lastName: string;
 
-  @IsDateString()
-  @IsNotEmpty()
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
   dob: Date;
 
   @IsEmail()
   email: string;
 
-  @Matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,}$/,
-    { message: 'invalid password' },
-  )
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
   password: string;
 
   @IsString()

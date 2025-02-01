@@ -5,10 +5,11 @@ import {
   CognitoUserAttribute,
   CognitoUserPool,
 } from 'amazon-cognito-identity-js';
-import { SignUpUserDto } from './dto/signup-user.dto';
 import { envs } from 'src/config/envs';
-import { SignInUserDto } from './dto/signin-user-dto';
 import { RecoverUserPasswordDto } from './dto/recover-user-password.dto';
+import { SignInUserDto } from './dto/signin-user-dto';
+import { SignUpUserDto } from './dto/signup-user.dto';
+import SignupResponse from './types/SignupResponse.type';
 
 @Injectable()
 export class AwsCognitoService {
@@ -18,54 +19,33 @@ export class AwsCognitoService {
     this.userPool = new CognitoUserPool({
       UserPoolId: envs.AWS_COGNITO_USER_POOL_ID,
       ClientId: envs.AWS_COGNITO_CLIENT_ID,
+      endpoint: envs.AWS_COGNITO_ENDPOINT,
     });
   }
 
-  async signupUser(signupUserDto: SignUpUserDto) {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      dob,
-      address,
-      country,
-      role,
-    } = signupUserDto;
+  async signupUser(signupUserDto: SignUpUserDto): Promise<SignupResponse> {
+    const { firstName, lastName, role, email, password } = signupUserDto;
+
+    const userAttributes = [
+      new CognitoUserAttribute({
+        Name: 'fullname',
+        Value: `${firstName} ${lastName}`,
+      }),
+      new CognitoUserAttribute({
+        Name: 'role',
+        Value: role,
+      }),
+    ];
 
     return new Promise((resolve, reject) => {
       this.userPool.signUp(
         email,
         password,
-        [
-          new CognitoUserAttribute({
-            Name: 'name',
-            Value: `${firstName} ${lastName}`,
-          }),
-          new CognitoUserAttribute({
-            Name: 'dob',
-            Value: dob.toISOString(),
-          }),
-          new CognitoUserAttribute({
-            Name: 'address',
-            Value: address,
-          }),
-          new CognitoUserAttribute({
-            Name: 'country',
-            Value: country,
-          }),
-          new CognitoUserAttribute({
-            Name: 'role',
-            Value: role,
-          }),
-        ],
+        userAttributes,
         [],
         (err, result) => {
-          if (!result) {
-            reject(new Error(err?.message || 'Registration failed'));
-          } else {
-            resolve(result.user);
-          }
+          if (err) reject(new Error(err.message || JSON.stringify(err)));
+          resolve(result as unknown as SignupResponse);
         },
       );
     });

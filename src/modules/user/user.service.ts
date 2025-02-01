@@ -11,21 +11,37 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { RecoverUserPasswordDto } from './dto/recover-user-password.dto';
+import { AwsCognitoService } from './aws-cognito.service';
+import SignupResponse from './types/SignupResponse.type';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: Repository<User>,
+    private readonly awsCognitoService: AwsCognitoService,
   ) {}
 
-  async signup(createUserDto: SignUpUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
-    });
-    if (user) throw new ConflictException('Email already exists');
+  async signup(signupUserDto: SignUpUserDto) {
+    try {
+      const existingUser = await this.userRepository.findOne({
+        where: { email: signupUserDto.email },
+      });
+      if (existingUser) throw new ConflictException('User already exists');
 
-    return await this.userRepository.save(createUserDto);
+      const cognitoResponse =
+        await this.awsCognitoService.signupUser(signupUserDto);
+      const user = await this.userRepository.save(signupUserDto);
+
+      return { user, cognitoUser: cognitoResponse };
+    } catch (error) {
+      return {
+        error: true,
+        message: error.message || 'An unexpected error occurred',
+        cognitoUser: null,
+        user: null,
+      };
+    }
   }
 
   async signin(signInDto: SignInUserDto): Promise<User> {

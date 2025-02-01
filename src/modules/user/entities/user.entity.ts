@@ -18,7 +18,7 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ type: 'date' })
+  @Column()
   dob: Date;
 
   @Column({ unique: true })
@@ -39,6 +39,9 @@ export class User {
     default: Role.CLIENT,
   })
   role: Role;
+
+  @Column({ nullable: true })
+  cognitoId?: string;
 
   @CreateDateColumn()
   createdAt: Date;
