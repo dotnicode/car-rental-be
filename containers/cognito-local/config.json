@@ -13,7 +13,11 @@
   "UserPoolDefaults": {
     "UsernameAttributes": [
       "email"
-    ]
+    ],
+    "AuthenticationFlowConfig": {
+      "UserPasswordAuth": true
+    },
+    "AutoConfirm": true
   },
   "KMSConfig": {
     "credentials": {

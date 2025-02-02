@@ -3,7 +3,7 @@ import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
 import { SignUpUserDto } from '../dto/signup-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { RecoverUserPasswordDto } from '../dto/recover-user-password.dto';
+import { RecoverUserPasswordDto } from '../dto/recover-password.dto';
 import { Role } from '../enums/user-role.enum';
 import { User } from '../entities/user.entity';
 
@@ -60,9 +60,7 @@ describe('UserController', () => {
 
       jest.spyOn(service, 'recoverPassword').mockResolvedValue(expectedResult);
 
-      expect(await controller.recoverPassword(recoverPasswordDto)).toBe(
-        expectedResult,
-      );
+      expect(await controller.recoverPassword(recoverPasswordDto)).toBe(expectedResult);
       expect(service.recoverPassword).toHaveBeenCalledWith(recoverPasswordDto);
     });
   });

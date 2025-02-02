@@ -40,9 +40,6 @@ export class User {
   })
   role: Role;
 
-  @Column({ nullable: true })
-  cognitoId?: string;
-
   @CreateDateColumn()
   createdAt: Date;
 

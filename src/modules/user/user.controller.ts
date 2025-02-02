@@ -1,19 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { RecoverUserPasswordDto } from './dto/recover-password.dto';
+import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RecoverUserPasswordDto } from './dto/recover-user-password.dto';
-import { SignInUserDto } from './dto/signin-user-dto';
-import { AwsCognitoService } from './aws-cognito.service';
+import { UserService } from './user.service';
+import { ConfirmSignUpDto } from './dto/confirm-signup.dto';
 
 @Controller('user')
 export class UserController {
@@ -24,9 +26,35 @@ export class UserController {
     return this.userService.signup(createUserDto);
   }
 
+  @Post('confirm-signup')
+  async confirmSignUp(@Body() confirmSignUpDto: ConfirmSignUpDto) {
+    const { email, code } = confirmSignUpDto;
+    try {
+      return await this.userService.confirmSignUp(email, code);
+    } catch (error) {
+      throw new HttpException(
+        {
+          error: true,
+          message: error.message || 'An unexpected error occurred',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   @Post('signin')
-  signin(@Body() signinDto: SignInUserDto) {
-    return this.userService.signin(signinDto);
+  async signin(@Body() signinDto: SignInUserDto) {
+    try {
+      return await this.userService.signin(signinDto);
+    } catch (error) {
+      throw new HttpException(
+        {
+          error: true,
+          message: error.message || 'An unexpected error occurred',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 
   @Post('recover-password')
@@ -46,14 +74,11 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne({ id });
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
