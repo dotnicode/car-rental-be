@@ -67,20 +67,6 @@ export class AwsCognitoService {
     });
   }
 
-  async getUser(username: string) {
-    const userCognito = new CognitoUser({
-      Username: username,
-      Pool: this.userPool,
-    });
-
-    return new Promise((resolve, reject) => {
-      userCognito.getUserData((err, result) => {
-        if (err) reject(new Error(err.message || 'Get user failed'));
-        resolve(result);
-      });
-    });
-  }
-
   async signinUser(signinUserDto: SignInUserDto) {
     const { email, password } = signinUserDto;
 

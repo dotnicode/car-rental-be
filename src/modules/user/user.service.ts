@@ -14,6 +14,7 @@ import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { USER_REPOSITORY } from './providers/user.provider';
+import { getConfirmationCode } from './utils/get-confirmation-code';
 
 @Injectable()
 export class UserService {
@@ -29,18 +30,20 @@ export class UserService {
     try {
       const isUserExists = await this.userRepository.findOne({ where: { email } });
       if (isUserExists) throw new ConflictException(`User #${email} already exists`);
+
       await this.awsCognitoService.signupUser({ email, password, role });
+
+      // Metodo para poder confirmar unicamente en local al usuario
+      const code = await getConfirmationCode(email);
+      if (!code) throw new NotFoundException('Confirmation code not found');
+
+      const confirmation = await this.awsCognitoService.confirmSignUp(email, code);
+      if (!confirmation) throw new BadRequestException('Confirmation failed');
 
       return await this.userRepository.save(signupUserDto);
     } catch (error) {
       throw new BadRequestException(error.message || 'An unexpected error occurred');
     }
-  }
-
-  async confirmSignUp(email: string, code: string) {
-    await this.findOne({ email });
-
-    return await this.awsCognitoService.confirmSignUp(email, code);
   }
 
   async signin(signInDto: SignInUserDto) {
@@ -89,6 +92,6 @@ export class UserService {
   }
 
   async logout() {
-    return Promise.resolve({ message: 'Logout successful' });
+    return this.awsCognitoService.logout();
   }
 }

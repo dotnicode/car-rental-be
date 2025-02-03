@@ -15,7 +15,6 @@ import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { ConfirmSignUpDto } from './dto/confirm-signup.dto';
 
 @Controller('user')
 export class UserController {
@@ -24,22 +23,6 @@ export class UserController {
   @Post('signup')
   signup(@Body() createUserDto: SignUpUserDto) {
     return this.userService.signup(createUserDto);
-  }
-
-  @Post('confirm-signup')
-  async confirmSignUp(@Body() confirmSignUpDto: ConfirmSignUpDto) {
-    const { email, code } = confirmSignUpDto;
-    try {
-      return await this.userService.confirmSignUp(email, code);
-    } catch (error) {
-      throw new HttpException(
-        {
-          error: true,
-          message: error.message || 'An unexpected error occurred',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
   }
 
   @Post('signin')
