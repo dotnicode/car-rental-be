@@ -9,13 +9,16 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-
+import { DebugGuard } from '../auth/debug.guard';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -55,6 +58,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @UseGuards(DebugGuard, AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne({ id });

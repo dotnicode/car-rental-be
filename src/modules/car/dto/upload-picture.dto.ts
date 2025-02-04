@@ -1,12 +1,7 @@
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { CarPicture } from '../enums/car-picture.enum';
 import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+import { CarPicture } from '../enums/car-picture.enum';
 
 export class UploadPictureDto {
   @IsString()

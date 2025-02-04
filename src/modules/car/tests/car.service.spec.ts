@@ -3,11 +3,11 @@ import { Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DatabaseException } from '../../../common/exceptions/database.exception';
-import { CAR_REPOSITORY } from '../providers/car.provider';
 import { CarService } from '../car.service';
+import { CreateCarDto } from '../dto/create-car.dto';
 import { Car } from '../entities/car.entity';
 import { CarNotFoundException } from '../exceptions/car-not-found.exception';
-import { CreateCarDto } from '../dto/create-car.dto';
+import { CAR_REPOSITORY } from '../providers/car.provider';
 import { PICTURE_REPOSITORY } from '../providers/picture.provider';
 
 describe('CarService', () => {

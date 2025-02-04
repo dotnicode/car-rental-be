@@ -1,12 +1,10 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { Repository } from 'typeorm';
+
+import {
+  BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common';
+
 import { AwsCognitoService } from './aws-cognito.service';
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';

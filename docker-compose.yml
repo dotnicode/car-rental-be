@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:17-alpine
+    restart: always
     ports:
       - 5432:5432
     volumes:
@@ -12,6 +13,7 @@ services:
 
   localstack:
     image: localstack/localstack
+    restart: always
     ports:
       - '4566:4566'
     environment:
@@ -29,6 +31,7 @@ services:
 
   cognito-local:
     image: jagregory/cognito-local
+    restart: always
     ports:
       - '9229:9229'
     environment:

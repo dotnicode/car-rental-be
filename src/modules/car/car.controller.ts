@@ -1,26 +1,17 @@
+import { plainToInstance } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
+
 import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  MaxFileSizeValidator,
-  Param,
-  ParseFilePipe,
-  ParseIntPipe,
-  Patch,
-  Post,
-  UploadedFile,
-  UseInterceptors,
+  BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe,
+  ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadPictureDto } from './dto/upload-picture.dto';
-import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
 
 @Controller('car')
 export class CarController {
@@ -31,6 +22,7 @@ export class CarController {
     return await this.carService.create(createCarDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll() {
     return await this.carService.findAll();
@@ -42,10 +34,7 @@ export class CarController {
   }
 
   @Patch(':id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateCarDto: UpdateCarDto,
-  ) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateCarDto: UpdateCarDto) {
     return await this.carService.update(+id, updateCarDto);
   }
 
@@ -71,10 +60,7 @@ export class CarController {
     file: Express.Multer.File,
     @Body() uploadPictureDto: UploadPictureDto,
   ) {
-    const plainUploadPictureDto = plainToInstance(
-      UploadPictureDto,
-      uploadPictureDto,
-    );
+    const plainUploadPictureDto = plainToInstance(UploadPictureDto, uploadPictureDto);
     const errors: ValidationError[] = await validate(plainUploadPictureDto);
     if (errors.length > 0) {
       throw new BadRequestException(errors.map((e) => e.constraints));

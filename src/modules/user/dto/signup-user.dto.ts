@@ -1,19 +1,10 @@
+import { Transform, Type } from 'class-transformer';
 import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  IsDateString,
-  MinLength,
-  IsOptional,
-  Matches,
-  isStrongPassword,
-  IsStrongPassword,
-  IsDate,
+  IsDate, IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, isStrongPassword,
+  IsStrongPassword, Matches, MinLength
 } from 'class-validator';
+
 import { Role } from '../enums/user-role.enum';
-import { Type } from 'class-transformer';
-import { Transform } from 'class-transformer';
 
 export class SignUpUserDto {
   @IsString()

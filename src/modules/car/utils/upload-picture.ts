@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { randomUUID } from 'crypto';
+
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+
 import { S3ConfigProvider } from '../providers/s3.provider';
 
 export const uploadPicture = async (file: Express.Multer.File) => {

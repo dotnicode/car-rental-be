@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from '../user.controller';
-import { UserService } from '../user.service';
+
+import { RecoverUserPasswordDto } from '../dto/recover-password.dto';
 import { SignUpUserDto } from '../dto/signup-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { RecoverUserPasswordDto } from '../dto/recover-password.dto';
-import { Role } from '../enums/user-role.enum';
 import { User } from '../entities/user.entity';
+import { Role } from '../enums/user-role.enum';
+import { UserController } from '../user.controller';
+import { UserService } from '../user.service';
 
 describe('UserController', () => {
   let controller: UserController;

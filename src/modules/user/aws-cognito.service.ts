@@ -1,11 +1,11 @@
-import {
-  AuthFlowType,
-  CognitoIdentityProvider,
-  InitiateAuthCommand,
-} from '@aws-sdk/client-cognito-identity-provider';
-import { Injectable } from '@nestjs/common';
 import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { envs } from 'src/config/envs';
+
+import {
+  AuthFlowType, CognitoIdentityProvider, InitiateAuthCommand
+} from '@aws-sdk/client-cognito-identity-provider';
+import { Injectable } from '@nestjs/common';
+
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';

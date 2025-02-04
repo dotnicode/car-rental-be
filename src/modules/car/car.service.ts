@@ -1,19 +1,19 @@
+import { randomUUID } from 'crypto';
 import { FindOptionsRelations, Repository } from 'typeorm';
 
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { DatabaseException } from '../../common/exceptions/database.exception';
-import { CAR_REPOSITORY } from './providers/car.provider';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { Car } from './entities/car.entity';
-import { CarNotFoundException } from './exceptions/car-not-found.exception';
-import { Picture } from './entities/picture.entity';
-import { PICTURE_REPOSITORY } from './providers/picture.provider';
 import { UploadPictureDto } from './dto/upload-picture.dto';
+import { Car } from './entities/car.entity';
+import { Picture } from './entities/picture.entity';
+import { CarNotFoundException } from './exceptions/car-not-found.exception';
+import { CAR_REPOSITORY } from './providers/car.provider';
+import { PICTURE_REPOSITORY } from './providers/picture.provider';
 import { S3ConfigProvider } from './providers/s3.provider';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { randomUUID } from 'crypto';
 import { uploadPicture } from './utils/upload-picture';
 
 @Injectable()

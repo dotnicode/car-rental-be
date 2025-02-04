@@ -17,6 +17,7 @@ interface Envs {
   AWS_COGNITO_USER_POOL_ID: string;
   AWS_COGNITO_CLIENT_ID: string;
   AWS_COGNITO_ENDPOINT: string;
+  AWS_COGNITO_AUTHORITY: string;
 }
 
 const envsSchema = Joi.object<Envs>({
@@ -34,13 +35,13 @@ const envsSchema = Joi.object<Envs>({
   AWS_COGNITO_USER_POOL_ID: Joi.string().required(),
   AWS_COGNITO_CLIENT_ID: Joi.string().required(),
   AWS_COGNITO_ENDPOINT: Joi.string().required(),
+  AWS_COGNITO_AUTHORITY: Joi.string().required(),
 }).unknown(true);
 
 const validation = envsSchema.validate({
   ...process.env,
 });
 
-if (validation.error)
-  throw new Error(`Config validation error: ${validation.error.message}`);
+if (validation.error) throw new Error(`Config validation error: ${validation.error.message}`);
 
 export const envs = validation.value;

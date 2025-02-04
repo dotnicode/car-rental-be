@@ -1,11 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from '../user.service';
-import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { SignUpUserDto } from '../dto/signup-user.dto';
-import { USER_REPOSITORY } from '../providers/user.provider';
+import { User } from '../entities/user.entity';
 import { Role } from '../enums/user-role.enum';
+import { USER_REPOSITORY } from '../providers/user.provider';
+import { UserService } from '../user.service';
 
 describe('UserService', () => {
   let service: UserService;
