@@ -11,19 +11,16 @@ import { CarNotFoundException } from './exceptions/car-not-found.exception';
 import { Picture } from './entities/picture.entity';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
 import { UploadPictureDto } from './dto/upload-picture.dto';
-import { S3ConfigProvider } from './providers/s3.provider';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { randomUUID } from 'crypto';
-import { uploadPicture } from './utils/upload-picture';
+import { S3StorageService } from '../utils/s3-storage.service';
 
 @Injectable()
 export class CarService {
   constructor(
     @Inject(CAR_REPOSITORY)
     private readonly carRepository: Repository<Car>,
-
     @Inject(PICTURE_REPOSITORY)
     private readonly pictureRepository: Repository<Picture>,
+    private readonly s3StorageService: S3StorageService,
   ) {}
 
   async create(createCarDto: CreateCarDto) {
@@ -78,12 +75,12 @@ export class CarService {
         type: uploadPictureDto.type,
       },
     });
-    const uploadedPicture = await uploadPicture(file);
+    const uploadedPicture = await this.s3StorageService.uploadFile(file);
 
     const picture = existingPicture
       ? existingPicture
       : Object.assign(new Picture(), { car });
-    picture.src = uploadedPicture.imageUrl;
+    picture.src = uploadedPicture.fileUrl;
     picture.description = uploadPictureDto.description;
     picture.title = uploadPictureDto.title ?? file.originalname;
     picture.type = uploadPictureDto.type;
