@@ -1,13 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { S3StorageService } from './s3-storage.service';
-import {
-  S3Client,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
-import IFileUploadResult from './interfaces/file-upload-result.interface';
-import { envs } from 'src/config/envs';
 import { randomUUID } from 'crypto';
+import { envs } from 'src/config/envs';
+
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import IFileUploadResult from './interfaces/file-upload-result.interface';
+import { S3StorageService } from './s3-storage.service';
 
 jest.mock('@aws-sdk/client-s3');
 jest.mock('crypto', () => ({

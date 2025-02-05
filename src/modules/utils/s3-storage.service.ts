@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import IStorageService from './interfaces/storage-service.interface';
-import IFileUploadResult from './interfaces/file-upload-result.interface';
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { randomUUID } from 'crypto';
 import { envs } from 'src/config/envs';
+
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { Injectable } from '@nestjs/common';
+
+import IFileUploadResult from './interfaces/file-upload-result.interface';
+import IStorageService from './interfaces/storage-service.interface';
 import { S3ConfigProvider } from './providers/s3.provider';
 
 @Injectable()
@@ -25,7 +26,7 @@ export class S3StorageService implements IStorageService {
 
     return {
       fileKey,
-      fileUrl: `http://${envs.AWS_ENDPOINT}/${this.s3Provider.bucketName}/${fileKey}`,
+      fileUrl: `${envs.AWS_ENDPOINT}/${this.s3Provider.bucketName}/${fileKey}`,
     };
   }
 

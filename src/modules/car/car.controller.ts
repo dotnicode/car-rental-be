@@ -1,26 +1,16 @@
+import { plainToInstance } from 'class-transformer';
+import { validate, ValidationError } from 'class-validator';
+
 import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  MaxFileSizeValidator,
-  Param,
-  ParseFilePipe,
-  ParseIntPipe,
-  Patch,
-  Post,
-  UploadedFile,
-  UseInterceptors,
+  BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe,
+  ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadPictureDto } from './dto/upload-picture.dto';
-import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
 
 @Controller('car')
 export class CarController {

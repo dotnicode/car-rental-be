@@ -3,15 +3,16 @@ import { FindOptionsRelations, Repository } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { DatabaseException } from '../../common/exceptions/database.exception';
-import { CAR_REPOSITORY } from './providers/car.provider';
+import IStorageService from '../utils/interfaces/storage-service.interface';
+import { STORAGE_SERVICE } from '../utils/providers/storage.provider';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { Car } from './entities/car.entity';
-import { CarNotFoundException } from './exceptions/car-not-found.exception';
-import { Picture } from './entities/picture.entity';
-import { PICTURE_REPOSITORY } from './providers/picture.provider';
 import { UploadPictureDto } from './dto/upload-picture.dto';
-import { S3StorageService } from '../utils/s3-storage.service';
+import { Car } from './entities/car.entity';
+import { Picture } from './entities/picture.entity';
+import { CarNotFoundException } from './exceptions/car-not-found.exception';
+import { CAR_REPOSITORY } from './providers/car.provider';
+import { PICTURE_REPOSITORY } from './providers/picture.provider';
 
 @Injectable()
 export class CarService {
@@ -20,7 +21,8 @@ export class CarService {
     private readonly carRepository: Repository<Car>,
     @Inject(PICTURE_REPOSITORY)
     private readonly pictureRepository: Repository<Picture>,
-    private readonly s3StorageService: S3StorageService,
+    @Inject(STORAGE_SERVICE)
+    private readonly storageService: IStorageService,
   ) {}
 
   async create(createCarDto: CreateCarDto) {
@@ -75,7 +77,7 @@ export class CarService {
         type: uploadPictureDto.type,
       },
     });
-    const uploadedPicture = await this.s3StorageService.uploadFile(file);
+    const uploadedPicture = await this.storageService.uploadFile(file);
 
     const picture = existingPicture
       ? existingPicture

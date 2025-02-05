@@ -1,6 +1,7 @@
+import { envs } from 'src/config/envs';
+
 import { S3, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { envs } from 'src/config/envs';
 
 /*
  * Crear el bucket previamente con el comando `awslocal s3 mb s3://nombre-del-bucket`
