@@ -147,6 +147,9 @@ describe('PictureService', () => {
         carId: 'asdf-qwer-zxcv',
       };
 
+      const car = { id: uploadPictureDto.carId };
+      mockCarService.findOne.mockResolvedValue(car);
+
       mockS3StorageService.uploadFile.mockRejectedValue(
         new Error('Upload failed'),
       );

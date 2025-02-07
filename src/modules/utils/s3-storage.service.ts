@@ -1,7 +1,11 @@
 import { randomUUID } from 'crypto';
 import { envs } from 'src/config/envs';
 
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 
 import IFileUploadResult from './interfaces/file-upload-result.interface';
@@ -15,19 +19,23 @@ export class S3StorageService implements IStorageService {
   async uploadFile(file: Express.Multer.File): Promise<IFileUploadResult> {
     const fileKey = randomUUID();
 
-    await this.s3Provider.client.send(
-      new PutObjectCommand({
-        Bucket: this.s3Provider.bucketName,
-        Key: fileKey,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      }),
-    );
+    try {
+      await this.s3Provider.client.send(
+        new PutObjectCommand({
+          Bucket: this.s3Provider.bucketName,
+          Key: fileKey,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        }),
+      );
 
-    return {
-      fileKey,
-      fileUrl: `${envs.AWS_ENDPOINT}/${this.s3Provider.bucketName}/${fileKey}`,
-    };
+      return {
+        fileKey,
+        fileUrl: `${envs.AWS_ENDPOINT}/${this.s3Provider.bucketName}/${fileKey}`,
+      };
+    } catch (error) {
+      throw new Error('Upload failed');
+    }
   }
 
   async deleteFile(key: string): Promise<void> {
