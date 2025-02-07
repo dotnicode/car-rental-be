@@ -173,13 +173,14 @@ describe('PictureService', () => {
       mockPictureRepository.delete.mockResolvedValue({ affected: 1 });
       mockS3StorageService.deleteFile.mockResolvedValue(undefined);
 
-      await service.remove(pictureId);
+      const result = await service.remove(pictureId);
 
       expect(mockPictureRepository.findOne).toHaveBeenCalledWith({
         where: { id: pictureId },
       });
       expect(mockS3StorageService.deleteFile).toHaveBeenCalledWith('abc-123');
       expect(mockPictureRepository.delete).toHaveBeenCalledWith(pictureId);
+      expect(result).toEqual({ message: 'Picture deleted successfully' });
     });
 
     it('should throw error if picture not found', async () => {

@@ -19,20 +19,19 @@ export class PictureService {
     file: Express.Multer.File,
     uploadPictureDto: UploadPictureDto,
   ): Promise<Picture> {
-    await this.carService.findOne(uploadPictureDto.carId);
+    const car = await this.carService.findOne(uploadPictureDto.carId);
 
-    const { fileUrl } = await this.s3StorageService.uploadFile(file);
+    const { fileUrl, fileKey } = await this.s3StorageService.uploadFile(file);
 
     return this.pictureRepository.save({
       ...uploadPictureDto,
+      fileKey,
       src: fileUrl,
-      car: {
-        id: uploadPictureDto.carId,
-      },
+      car,
     });
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     const picture = await this.pictureRepository.findOne({
       where: { id },
     });
@@ -43,5 +42,7 @@ export class PictureService {
 
     await this.s3StorageService.deleteFile(picture.fileKey);
     await this.pictureRepository.delete(id);
+
+    return { message: 'Picture deleted successfully' };
   }
 }

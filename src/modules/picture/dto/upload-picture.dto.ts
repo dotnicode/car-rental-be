@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
@@ -17,8 +17,8 @@ export class UploadPictureDto {
   @IsOptional()
   title?: string;
 
+  @Transform((data) => data.value.toLowerCase())
   @IsEnum(PictureType)
-  @IsNotEmpty()
   type: PictureType;
 
   @IsDate()
