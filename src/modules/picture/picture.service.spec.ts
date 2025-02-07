@@ -162,7 +162,7 @@ describe('PictureService', () => {
 
   describe('remove', () => {
     it('should remove a picture and its file successfully', async () => {
-      const pictureId = 1;
+      const pictureId = '1';
       const picture = {
         id: pictureId,
         src: 'https://bucket.s3.amazonaws.com/abc-123',
@@ -183,7 +183,7 @@ describe('PictureService', () => {
     });
 
     it('should throw error if picture not found', async () => {
-      const pictureId = 999;
+      const pictureId = '999';
       mockPictureRepository.findOne.mockResolvedValue(null);
 
       await expect(service.remove(pictureId)).rejects.toThrow(
@@ -192,7 +192,7 @@ describe('PictureService', () => {
     });
 
     it('should handle S3 deletion failure', async () => {
-      const pictureId = 1;
+      const pictureId = '1';
       const picture = {
         id: pictureId,
         src: 'https://bucket.s3.amazonaws.com/abc-123',

@@ -18,6 +18,9 @@ export class Picture {
   car: Car;
 
   @Column()
+  fileKey: string;
+
+  @Column()
   src: string;
 
   @Column({ nullable: true })

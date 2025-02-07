@@ -32,8 +32,16 @@ export class PictureService {
     });
   }
 
-  async remove(id: number): Promise<void> {
-    // La implementación vendrá después
-    throw new Error('Not implemented');
+  async remove(id: string): Promise<void> {
+    const picture = await this.pictureRepository.findOne({
+      where: { id },
+    });
+
+    if (!picture) {
+      throw new Error('Picture not found');
+    }
+
+    await this.s3StorageService.deleteFile(picture.fileKey);
+    await this.pictureRepository.delete(id);
   }
 }
