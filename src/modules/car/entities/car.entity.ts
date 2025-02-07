@@ -1,13 +1,12 @@
+import { Picture } from 'src/modules/picture/entities/picture.entity';
 import {
   Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { Picture } from './picture.entity';
-
 @Entity()
 export class Car {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   brand: string;
