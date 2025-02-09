@@ -14,8 +14,8 @@ export class Picture {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Car, (car) => car.pictures)
-  car: Car;
+  @ManyToOne(() => Car, (car) => car.pictures, { nullable: true })
+  car?: Car;
 
   @Column()
   fileKey: string;
