@@ -1,6 +1,7 @@
+import { envs } from 'src/config/envs';
+
 import { S3, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { envs } from 'src/config/envs';
 
 /*
  * Crear el bucket previamente con el comando `awslocal s3 mb s3://nombre-del-bucket`
@@ -12,7 +13,7 @@ export class S3ConfigProvider {
   private readonly _bucketName: string;
 
   constructor() {
-    this._bucketName = envs.AWS_BUCKET_NAME;
+    this._bucketName = envs.AWS_S3_BUCKET_NAME;
     this._s3 = new S3Client({
       credentials: {
         accessKeyId: envs.AWS_ACCESS_KEY_ID,

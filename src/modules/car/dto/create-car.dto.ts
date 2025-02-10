@@ -1,11 +1,5 @@
 import {
-  IsArray,
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-  MinLength,
+  IsArray, IsBoolean, IsNumber, IsOptional, IsString, Min, MinLength
 } from 'class-validator';
 
 export class CreateCarDto {

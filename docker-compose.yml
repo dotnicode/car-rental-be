@@ -1,24 +1,29 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:17-alpine
+    restart: always
     ports:
       - 5432:5432
     volumes:
-      - ./docker/car_rental_db:/var/lib/postgresql/data
+      - ./data/car_rental_db:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
+
   localstack:
     image: localstack/localstack
+    restart: always
     ports:
-      - "4566:4566"
+      - '4566:4566'
     environment:
       - SERVICES=s3
       - DEFAULT_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - DEBUG=1
+      - PERSIST_DATA=1
     volumes:
-      - "./docker/localstack:/docker-entrypoint-initaws.d"
+      - './data/localstack:/docker-entrypoint-initaws.d'
+      - './data/localstack:/var/lib/localstack/state'
+      - '/var/run/docker.sock:/var/run/docker.sock'

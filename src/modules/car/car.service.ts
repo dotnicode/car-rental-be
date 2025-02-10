@@ -1,29 +1,22 @@
 import { FindOptionsRelations, Repository } from 'typeorm';
 
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import { DatabaseException } from '../../common/exceptions/database.exception';
-import { CAR_REPOSITORY } from './providers/car.provider';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Car } from './entities/car.entity';
 import { CarNotFoundException } from './exceptions/car-not-found.exception';
-import { Picture } from './entities/picture.entity';
-import { PICTURE_REPOSITORY } from './providers/picture.provider';
-import { UploadPictureDto } from './dto/upload-picture.dto';
-import { S3ConfigProvider } from './providers/s3.provider';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { randomUUID } from 'crypto';
-import { uploadPicture } from './utils/upload-picture';
+import { CAR_REPOSITORY } from './providers/car.provider';
+import { PictureService } from '../picture/picture.service';
 
 @Injectable()
 export class CarService {
   constructor(
     @Inject(CAR_REPOSITORY)
     private readonly carRepository: Repository<Car>,
-
-    @Inject(PICTURE_REPOSITORY)
-    private readonly pictureRepository: Repository<Picture>,
+    @Inject(forwardRef(() => PictureService))
+    private readonly pictureService: PictureService,
   ) {}
 
   async create(createCarDto: CreateCarDto) {
@@ -35,7 +28,7 @@ export class CarService {
   }
 
   async findOne(
-    id: number,
+    id: string,
     relations: FindOptionsRelations<Car> = { pictures: true },
   ) {
     try {
@@ -48,55 +41,47 @@ export class CarService {
       return car;
     } catch (error) {
       if (error instanceof CarNotFoundException) throw error;
-      throw new DatabaseException('Error accessing database');
+      throw new DatabaseException(`Error accessing database: ${error.message}`);
     }
   }
 
-  async update(id: number, updateCarDto: UpdateCarDto) {
-    await this.carRepository.update(id, updateCarDto);
-    return await this.findOne(id);
-  }
+  async update(id: string, updateCarDto: UpdateCarDto) {
+    const car = await this.findOne(id);
+    const currentPictures = car.pictures || [];
+    const newPictureIds = updateCarDto.pictureIds || [];
 
-  async remove(id: number) {
-    await this.carRepository.delete(id);
-    return { message: `Car #${id} deleted successfully` };
-  }
+    const picturesToDelete = currentPictures
+      .filter((picture) => !newPictureIds.includes(picture.id))
+      .map((picture) => picture.id);
 
-  /*
-   * Picture management
-   */
+    if (picturesToDelete.length > 0) {
+      await Promise.all(
+        picturesToDelete.map((pictureId) =>
+          this.pictureService.remove(pictureId),
+        ),
+      );
+    }
 
-  async uploadCarPicture(
-    carId: number,
-    file: Express.Multer.File,
-    uploadPictureDto: UploadPictureDto,
-  ) {
-    const car = await this.findOne(carId, { pictures: false });
-    const existingPicture = await this.pictureRepository.findOne({
-      where: {
-        car: { id: carId },
-        type: uploadPictureDto.type,
-      },
+    Object.assign(car, {
+      ...updateCarDto,
+      pictures: newPictureIds.map((pictureId) => ({ id: pictureId })),
     });
-    const uploadedPicture = await uploadPicture(file);
 
-    const picture = existingPicture
-      ? existingPicture
-      : Object.assign(new Picture(), { car });
-    picture.src = uploadedPicture.imageUrl;
-    picture.description = uploadPictureDto.description;
-    picture.title = uploadPictureDto.title ?? file.originalname;
-    picture.type = uploadPictureDto.type;
-    picture.date = uploadPictureDto.date;
+    return await this.carRepository.save(car);
+  }
 
-    const savedPicture = await this.pictureRepository.save(picture);
+  async remove(id: string) {
+    const car = await this.findOne(id);
+    const pictureIds = car.pictures?.map((picture) => picture.id);
 
-    return {
-      message: existingPicture
-        ? 'Picture updated successfully'
-        : 'Picture uploaded successfully',
-      picture: savedPicture,
-      car,
-    };
+    if (pictureIds) {
+      await Promise.all(
+        pictureIds.map((pictureId) => this.pictureService.remove(pictureId)),
+      );
+    }
+
+    await this.carRepository.delete(id);
+
+    return { message: `Car #${id} deleted successfully` };
   }
 }
