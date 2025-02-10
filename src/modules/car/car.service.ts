@@ -46,8 +46,28 @@ export class CarService {
   }
 
   async update(id: string, updateCarDto: UpdateCarDto) {
-    await this.carRepository.update(id, updateCarDto);
-    return await this.findOne(id);
+    const car = await this.findOne(id);
+    const currentPictures = car.pictures || [];
+    const newPictureIds = updateCarDto.pictureIds || [];
+
+    const picturesToDelete = currentPictures
+      .filter((picture) => !newPictureIds.includes(picture.id))
+      .map((picture) => picture.id);
+
+    if (picturesToDelete.length > 0) {
+      await Promise.all(
+        picturesToDelete.map((pictureId) =>
+          this.pictureService.remove(pictureId),
+        ),
+      );
+    }
+
+    Object.assign(car, {
+      ...updateCarDto,
+      pictures: newPictureIds.map((pictureId) => ({ id: pictureId })),
+    });
+
+    return await this.carRepository.save(car);
   }
 
   async remove(id: string) {
