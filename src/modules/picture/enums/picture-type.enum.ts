@@ -1,4 +1,4 @@
-export enum CarPicture {
+export enum PictureType {
   FRONT = 'front',
   BACK = 'back',
   LEFT = 'left',

@@ -1,13 +1,17 @@
+import { Picture } from 'src/modules/picture/entities/picture.entity';
 import {
-  Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-
-import { Picture } from './picture.entity';
 
 @Entity()
 export class Car {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   brand: string;
@@ -15,8 +19,8 @@ export class Car {
   @Column()
   model: string;
 
-  @OneToMany(() => Picture, (picture) => picture.car)
-  pictures: Picture[];
+  @OneToMany(() => Picture, (picture) => picture.car, { nullable: true })
+  pictures?: Picture[];
 
   @Column()
   color: string;

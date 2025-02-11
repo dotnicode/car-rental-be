@@ -1,7 +1,6 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-
-import { CarPicture } from '../enums/car-picture.enum';
+import { PictureType } from '../enums/picture-type.enum';
 
 export class UploadPictureDto {
   @IsString()
@@ -12,11 +11,15 @@ export class UploadPictureDto {
   @IsOptional()
   title?: string;
 
-  @IsEnum(CarPicture)
-  @IsNotEmpty()
-  type: CarPicture;
+  @Transform((data) => data.value.toLowerCase())
+  @IsEnum(PictureType)
+  type: PictureType;
 
   @IsDate()
   @Type(() => Date)
   date: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  carId: string;
 }

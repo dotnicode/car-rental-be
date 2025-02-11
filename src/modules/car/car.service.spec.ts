@@ -2,13 +2,12 @@ import { Repository } from 'typeorm';
 
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DatabaseException } from '../../../common/exceptions/database.exception';
-import { CarService } from '../car.service';
-import { CreateCarDto } from '../dto/create-car.dto';
-import { Car } from '../entities/car.entity';
-import { CarNotFoundException } from '../exceptions/car-not-found.exception';
-import { CAR_REPOSITORY } from '../providers/car.provider';
-import { PICTURE_REPOSITORY } from '../providers/picture.provider';
+import { DatabaseException } from '../../common/exceptions/database.exception';
+import { CarService } from './car.service';
+import { CreateCarDto } from './dto/create-car.dto';
+import { Car } from './entities/car.entity';
+import { CarNotFoundException } from './exceptions/car-not-found.exception';
+import { CAR_REPOSITORY } from './providers/car.provider';
 
 describe('CarService', () => {
   let service: CarService;
@@ -16,7 +15,7 @@ describe('CarService', () => {
 
   const mockDate = new Date('2024-01-01T00:00:00Z');
   const mockCar: Car = {
-    id: 1,
+    id: '1',
     brand: 'Toyota',
     model: 'Corolla',
     pictures: [],
@@ -36,12 +35,6 @@ describe('CarService', () => {
     delete: jest.fn(),
   };
 
-  const mockPictureRepository = {
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -49,10 +42,6 @@ describe('CarService', () => {
         {
           provide: CAR_REPOSITORY,
           useValue: mockCarRepository,
-        },
-        {
-          provide: PICTURE_REPOSITORY,
-          useValue: mockPictureRepository,
         },
       ],
     }).compile();
@@ -102,29 +91,8 @@ describe('CarService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a car if found with its pictures', async () => {
-      const carId = 1;
-      const expectedCar = {
-        id: carId,
-        brand: 'Toyota',
-        model: 'Corolla',
-        year: 2022,
-        pictures: [],
-      };
-
-      mockCarRepository.findOne.mockResolvedValue(expectedCar);
-
-      const result = await service.findOne(carId, { pictures: true });
-
-      expect(result).toEqual(expectedCar);
-      expect(mockCarRepository.findOne).toHaveBeenCalledWith({
-        where: { id: carId },
-        relations: { pictures: true },
-      });
-    });
-
-    it('should return a car without pictures when relations is set to false', async () => {
-      const carId = 1;
+    it('should return a car if found', async () => {
+      const carId = '1';
       const expectedCar = {
         id: carId,
         brand: 'Toyota',
@@ -134,27 +102,24 @@ describe('CarService', () => {
 
       mockCarRepository.findOne.mockResolvedValue(expectedCar);
 
-      const result = await service.findOne(carId, { pictures: false });
+      const result = await service.findOne(carId);
 
       expect(result).toEqual(expectedCar);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
-        relations: { pictures: false },
       });
     });
 
     it('should throw CarNotFoundException if car is not found', async () => {
-      const carId = 999;
+      const carId = '999';
 
       mockCarRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne(carId)).rejects.toThrow(
-        CarNotFoundException,
-      );
+      await expect(service.findOne(carId)).rejects.toThrow(CarNotFoundException);
     });
 
     it('should throw DatabaseException for database errors', async () => {
-      const carId = 1;
+      const carId = '1';
 
       mockCarRepository.findOne.mockRejectedValue(new Error('Database error'));
 
@@ -164,7 +129,7 @@ describe('CarService', () => {
 
   describe('update', () => {
     it('should update a car successfully', async () => {
-      const carId = 1;
+      const carId = '1';
       const updateCarDto = {
         brand: 'Toyota Updated',
         color: 'yellow',
@@ -177,20 +142,16 @@ describe('CarService', () => {
       const result = await service.update(carId, updateCarDto);
 
       expect(result).toEqual(expectedCar);
-      expect(mockCarRepository.update).toHaveBeenCalledWith(
-        carId,
-        updateCarDto,
-      );
+      expect(mockCarRepository.update).toHaveBeenCalledWith(carId, updateCarDto);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
-        relations: { pictures: true },
       });
     });
   });
 
   describe('remove', () => {
     it('should remove a car successfully', async () => {
-      const carId = 1;
+      const carId = '1';
       const expectedResult = {
         message: `Car #${carId} deleted successfully`,
       };

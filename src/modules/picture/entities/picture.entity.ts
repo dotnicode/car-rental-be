@@ -1,20 +1,22 @@
+import { Car } from 'src/modules/car/entities/car.entity';
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
-
-import { CarPicture } from '../enums/car-picture.enum';
-import { Car } from './car.entity';
+import { PictureType } from '../enums/picture-type.enum';
 
 @Entity()
 export class Picture {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ManyToOne(() => Car, (car) => car.pictures)
-  car: Car;
+  @ManyToOne(() => Car, (car) => car.pictures, { nullable: true })
+  car?: Car;
 
   @Column()
-  src: string; // URL donde está almacenada la imagen (ej: S3, CloudFront)
+  fileKey: string;
+
+  @Column()
+  src: string;
 
   @Column({ nullable: true })
   description?: string;
@@ -23,7 +25,7 @@ export class Picture {
   title: string;
 
   @Column()
-  type: CarPicture;
+  type: PictureType;
 
   @Column()
   date: Date;
