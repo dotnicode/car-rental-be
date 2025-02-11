@@ -7,13 +7,12 @@ import { envs } from 'src/config/envs';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
-    console.log('JwtStrategy constructor');
-    console.log(envs.AWS_COGNITO_AUTHORITY);
+    console.log('JWT CTOR');
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      audience: envs.AWS_COGNITO_CLIENT_ID,
+      // audience: envs.AWS_COGNITO_CLIENT_ID,
       issuer: envs.AWS_COGNITO_AUTHORITY,
       algorithms: ['RS256'],
       secretOrKeyProvider: passportJwtSecret({

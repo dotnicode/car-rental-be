@@ -1,9 +1,4 @@
-import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
-
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -18,7 +13,6 @@ export class CarController {
     return await this.carService.create(createCarDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll() {
     return await this.carService.findAll();

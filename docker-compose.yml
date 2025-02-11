@@ -38,5 +38,8 @@ services:
       - '9229:9229'
     environment:
       - SERVICES=cognito-idp
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     volumes:
-      - './data/cognito-local:/app/.cognito'
+      - './data-config/config.json:/app/.cognito/config.json'
+      - './data/cognito-local:/app/.cognito/db'

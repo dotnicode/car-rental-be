@@ -1,14 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { envs } from 'src/config/envs';
 
 export async function getConfirmationCode(email: string): Promise<string | null> {
   try {
     const filePath = path.join(
       process.cwd(),
-      'containers',
+      'data',
       'cognito-local',
-      'db',
-      'local_4mTITs2N.json',
+      `${envs.AWS_COGNITO_USER_POOL_ID}.json`,
     );
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data = JSON.parse(fileContent);

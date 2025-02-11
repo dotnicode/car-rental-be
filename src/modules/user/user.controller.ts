@@ -53,6 +53,7 @@ export class UserController {
     return this.userService.logout();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.userService.findAll();
