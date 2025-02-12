@@ -6,7 +6,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
@@ -20,19 +19,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { DebugGuard } from '../auth/debug.guard';
 import { AuthGuard } from '@nestjs/passport';
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  signup(@Body() createUserDto: SignUpUserDto) {
-    return this.userService.signup(createUserDto);
+  signup(@Body() signupUserDto: SignUpUserDto) {
+    return this.userService.signup(signupUserDto);
   }
 
   @Post('signin')
-  async signin(@Body() signinDto: SignInUserDto) {
+  async signin(@Body() signInUserDto: SignInUserDto) {
     try {
-      return await this.userService.signin(signinDto);
+      return await this.userService.signin(signInUserDto);
     } catch (error) {
       throw new HttpException(
         {

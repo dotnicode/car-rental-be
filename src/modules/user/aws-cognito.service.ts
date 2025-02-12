@@ -91,7 +91,7 @@ export class AwsCognitoService {
   }
 
   recoverPassword(recoverPasswordDto: RecoverUserPasswordDto) {
-    const { email } = recoverPasswordDto;
+    const { email, currentPassword, newPassword } = recoverPasswordDto;
 
     const userCognito = new CognitoUser({
       Username: email,

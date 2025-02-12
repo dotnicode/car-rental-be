@@ -35,6 +35,7 @@ describe('UserService', () => {
     cognitoIdentityProvider: {
       send: jest.fn(),
     },
+    recoverPassword: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -225,19 +226,22 @@ describe('UserService', () => {
   describe('recoverPassword', () => {
     const recoverPasswordDto = {
       email: 'test@example.com',
+      currentPassword: 'oldPassword',
+      newPassword: 'newPassword',
     };
 
     it('should initiate password recovery', async () => {
       const mockUser = {
         id: '1',
-        email: recoverPasswordDto.email,
+        email: 'test@example.com',
       };
 
       mockUserRepository.findOne.mockResolvedValue(mockUser);
+      mockAwsCognitoService.recoverPassword.mockResolvedValue({});
 
       const result = await service.recoverPassword(recoverPasswordDto);
 
-      expect(result).toEqual({ message: 'Recovery email sent' });
+      expect(result).toEqual({ message: 'Password updated successfully' });
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: recoverPasswordDto.email },
       });

@@ -16,7 +16,6 @@ import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { USER_REPOSITORY } from './providers/user.provider';
-import { getConfirmationCode } from './utils/get-confirmation-code';
 
 @Injectable()
 export class UserService {
@@ -34,6 +33,7 @@ export class UserService {
       if (isUserExists) throw new ConflictException(`User #${email} already exists`);
 
       await this.awsCognitoService.signupUser({ email, password, role });
+
       await this.awsCognitoService.confirmSignUp(email);
 
       return await this.userRepository.save(signupUserDto);
@@ -82,9 +82,12 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { email: recoverPasswordDto.email },
     });
+
     if (!user) throw new NotFoundException('User not found');
 
-    return { message: 'Recovery email sent' };
+    await this.awsCognitoService.recoverPassword(recoverPasswordDto);
+
+    return { message: 'Password updated successfully' };
   }
 
   async logout() {
