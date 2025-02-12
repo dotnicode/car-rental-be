@@ -1,25 +1,40 @@
-import { Repository } from 'typeorm';
-
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Repository } from 'typeorm';
+import { AdminConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 
-import { SignUpUserDto } from '../dto/signup-user.dto';
+import { AwsCognitoService } from '../aws-cognito.service';
 import { User } from '../entities/user.entity';
-import { Role } from '../enums/user-role.enum';
 import { USER_REPOSITORY } from '../providers/user.provider';
 import { UserService } from '../user.service';
+import { Role } from '../enums/user-role.enum';
 
 describe('UserService', () => {
   let service: UserService;
-  let repository: Repository<User>;
+  let userRepository: Repository<User>;
+  let awsCognitoService: AwsCognitoService;
 
   const mockUserRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
     find: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+  };
+
+  const mockAwsCognitoService = {
+    signupUser: jest.fn(),
+    confirmSignUp: jest.fn(),
+    signinUser: jest.fn(),
+    logout: jest.fn(),
+    cognitoIdentityProvider: {
+      send: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -30,171 +45,218 @@ describe('UserService', () => {
           provide: USER_REPOSITORY,
           useValue: mockUserRepository,
         },
+        {
+          provide: AwsCognitoService,
+          useValue: mockAwsCognitoService,
+        },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
-    repository = module.get<Repository<User>>(USER_REPOSITORY);
+    userRepository = module.get<Repository<User>>(USER_REPOSITORY);
+    awsCognitoService = module.get<AwsCognitoService>(AwsCognitoService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('signup', () => {
-    it('should signup a new client user successfully', async () => {
-      const createUserDto: SignUpUserDto = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        password: 'password123',
-        dob: new Date('1990-01-01'),
-        address: '123 Main St',
-        country: 'USA',
-        role: Role.CLIENT,
-      };
+    const signupDto = {
+      firstName: 'Test',
+      lastName: 'User',
+      dob: new Date('1990-01-01'),
+      email: 'test@example.com',
+      password: 'Password123!',
+      address: '123 Test St',
+      country: 'TestLand',
+      role: Role.CLIENT,
+    };
 
+    it('should successfully signup a new user', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
-      mockUserRepository.create.mockReturnValue(createUserDto);
-      mockUserRepository.save.mockResolvedValue({ id: 1, ...createUserDto });
+      mockAwsCognitoService.signupUser.mockResolvedValue({});
+      mockAwsCognitoService.confirmSignUp.mockResolvedValue({});
+      mockUserRepository.save.mockResolvedValue(signupDto);
 
-      const result = await service.signup(createUserDto);
+      const result = await service.signup(signupDto);
 
-      expect(result).toBeDefined();
-      expect(result.id).toBeDefined();
-      expect(result.email).toBe(createUserDto.email);
+      expect(result).toEqual(signupDto);
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { email: signupDto.email },
+      });
+      expect(mockAwsCognitoService.signupUser).toHaveBeenCalledWith({
+        email: signupDto.email,
+        password: signupDto.password,
+        role: signupDto.role,
+      });
+      expect(mockAwsCognitoService.confirmSignUp).toHaveBeenCalledWith(signupDto.email);
+      expect(mockUserRepository.save).toHaveBeenCalledWith(signupDto);
     });
 
-    it('should throw ConflictException if email already exists', async () => {
-      const createUserDto = {
-        email: 'existing@example.com',
-        password: 'password123',
-      } as SignUpUserDto;
+    it('should throw ConflictException if user already exists', async () => {
+      mockUserRepository.findOne.mockResolvedValue(signupDto);
 
-      mockUserRepository.findOne.mockResolvedValue({
-        id: 1,
-        email: 'existing@example.com',
-      });
-
-      await expect(service.signup(createUserDto)).rejects.toThrow(
-        ConflictException,
+      await expect(service.signup(signupDto)).rejects.toThrow(
+        new ConflictException(`User #${signupDto.email} already exists`),
       );
+    });
+
+    it('should throw BadRequestException if signup fails', async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
+      mockAwsCognitoService.signupUser.mockRejectedValue(new Error('Signup failed'));
+
+      await expect(service.signup(signupDto)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException if confirmation fails', async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
+      mockAwsCognitoService.signupUser.mockResolvedValue({});
+      mockAwsCognitoService.confirmSignUp.mockRejectedValue(new Error('Confirmation failed'));
+
+      await expect(service.signup(signupDto)).rejects.toThrow(BadRequestException);
     });
   });
 
-  describe('update', () => {
-    it('should update user details successfully', async () => {
-      const updateData = {
-        firstName: 'Updated',
-        lastName: 'Name',
-        address: 'New Address',
-      };
+  describe('signin', () => {
+    const signinDto = {
+      email: 'test@example.com',
+      password: 'Password123!',
+    };
 
-      const existingUser = {
-        id: 1,
-        ...updateData,
-        role: Role.CLIENT,
-      };
+    const mockCognitoResponse = {
+      accessToken: 'mockAccessToken',
+      refreshToken: 'mockRefreshToken',
+      idToken: 'mockIdToken',
+    };
 
-      mockUserRepository.findOne.mockResolvedValue(existingUser);
-      mockUserRepository.save.mockResolvedValue(existingUser);
+    it('should successfully signin a user', async () => {
+      mockUserRepository.findOne.mockResolvedValue({
+        id: '1',
+        email: signinDto.email,
+      });
+      mockAwsCognitoService.signinUser.mockResolvedValue(mockCognitoResponse);
 
-      const result = await service.update(1, updateData);
+      const result = await service.signin(signinDto);
 
-      expect(result).toBeDefined();
-      expect(result.firstName).toBe(updateData.firstName);
-      expect(mockUserRepository.save).toHaveBeenCalled();
+      expect(result).toEqual({ cognitoResponse: mockCognitoResponse });
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { email: signinDto.email },
+      });
     });
 
-    it('should throw NotFoundException when updating non-existent user', async () => {
-      mockUserRepository.findOne.mockResolvedValue(null);
+    it('should throw UnauthorizedException if credentials are invalid', async () => {
+      mockUserRepository.findOne.mockResolvedValue({
+        id: '1',
+        email: signinDto.email,
+      });
+      mockAwsCognitoService.signinUser.mockRejectedValue(new Error('Invalid credentials'));
 
-      await expect(service.update(999, { firstName: 'Test' })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.signin(signinDto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      const users = [
-        { id: 1, email: 'user1@example.com' },
-        { id: 2, email: 'user2@example.com' },
-      ];
-
-      mockUserRepository.find.mockResolvedValue(users);
+      const mockUsers = [{ id: '1', email: 'test@example.com' }];
+      mockUserRepository.find.mockResolvedValue(mockUsers);
 
       const result = await service.findAll();
 
-      expect(result).toEqual(users);
+      expect(result).toEqual(mockUsers);
     });
   });
 
   describe('findOne', () => {
     it('should return a user by id', async () => {
-      const user = { id: 1, email: 'test@example.com' };
+      const mockUser = { id: '1', email: 'test@example.com' };
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
 
-      mockUserRepository.findOne.mockResolvedValue(user);
+      const result = await service.findOne({ id: '1' });
 
-      const result = await service.findOne(1);
-
-      expect(result).toEqual(user);
+      expect(result).toEqual(mockUser);
     });
 
-    it('should throw NotFoundException when user not found', async () => {
+    it('should throw NotFoundException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne({ id: '1' })).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('update', () => {
+    const updateDto = {
+      firstName: 'Updated',
+      lastName: 'Name',
+      address: 'New Address',
+    };
+
+    it('should update a user', async () => {
+      const mockUser = {
+        id: '1',
+        email: 'test@example.com',
+        firstName: 'Original',
+        lastName: 'User',
+        address: 'Old Address',
+      };
+
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      mockUserRepository.update.mockResolvedValue({ affected: 1 });
+
+      const result = await service.update('1', updateDto);
+
+      expect(result).toEqual({ affected: 1 });
+      expect(mockUserRepository.update).toHaveBeenCalledWith('1', updateDto);
     });
   });
 
   describe('remove', () => {
-    it('should remove a user successfully', async () => {
-      const user = { id: 1, email: 'test@example.com' };
+    it('should remove a user', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      mockUserRepository.remove.mockResolvedValue(mockUser);
 
-      mockUserRepository.findOne.mockResolvedValue(user);
-      mockUserRepository.remove.mockResolvedValue(user);
+      const result = await service.remove('1');
 
-      const result = await service.remove(1);
-
-      expect(result).toEqual(user);
-      expect(mockUserRepository.remove).toHaveBeenCalledWith(user);
-    });
-
-    it('should throw NotFoundException when trying to remove non-existent user', async () => {
-      mockUserRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+      expect(result).toEqual(mockUser);
     });
   });
 
   describe('recoverPassword', () => {
-    it('should initiate password recovery process', async () => {
-      const recoverPasswordDto = { email: 'test@example.com' };
-      const expectedResult = { message: 'Recovery email sent' };
+    const recoverPasswordDto = {
+      email: 'test@example.com',
+    };
 
-      mockUserRepository.findOne.mockResolvedValue({
-        id: 1,
-        email: 'test@example.com',
-      });
+    it('should initiate password recovery', async () => {
+      const mockUser = {
+        id: '1',
+        email: recoverPasswordDto.email,
+      };
+
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
 
       const result = await service.recoverPassword(recoverPasswordDto);
 
-      expect(result).toEqual(expectedResult);
+      expect(result).toEqual({ message: 'Recovery email sent' });
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { email: recoverPasswordDto.email },
+      });
     });
 
-    it('should handle non-existent email for password recovery', async () => {
-      const recoverPasswordDto = { email: 'nonexistent@example.com' };
+    it('should throw NotFoundException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.recoverPassword(recoverPasswordDto)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.recoverPassword(recoverPasswordDto)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('logout', () => {
-    it('should logout user successfully', async () => {
-      const expectedResult = { message: 'Logout successful' };
-      const result = await service.logout();
+    it('should logout user', async () => {
+      mockAwsCognitoService.logout.mockResolvedValue(undefined);
 
-      expect(result).toEqual(expectedResult);
+      await service.logout();
+
+      expect(mockAwsCognitoService.logout).toHaveBeenCalled();
     });
   });
 });

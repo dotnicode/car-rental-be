@@ -2,7 +2,10 @@ import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cogni
 import { envs } from 'src/config/envs';
 
 import {
-  AuthFlowType, CognitoIdentityProvider, InitiateAuthCommand
+  AdminConfirmSignUpCommand,
+  AuthFlowType,
+  CognitoIdentityProvider,
+  InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@nestjs/common';
 
@@ -53,18 +56,13 @@ export class AwsCognitoService {
     });
   }
 
-  async confirmSignUp(username: string, code: string) {
-    const userCognito = new CognitoUser({
+  async confirmSignUp(username: string) {
+    const confirmCommand = new AdminConfirmSignUpCommand({
+      UserPoolId: envs.AWS_COGNITO_USER_POOL_ID!,
       Username: username,
-      Pool: this.userPool,
     });
 
-    return new Promise((resolve, reject) => {
-      userCognito.confirmRegistration(code, true, (err, result) => {
-        if (err) reject(new Error(err.message || 'Confirmation failed'));
-        resolve(result);
-      });
-    });
+    await this.cognitoIdentityProvider.send(confirmCommand);
   }
 
   async signinUser(signinUserDto: SignInUserDto) {

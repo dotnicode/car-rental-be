@@ -1,8 +1,12 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 import {
-  BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
-  UnauthorizedException
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { AwsCognitoService } from './aws-cognito.service';
@@ -30,13 +34,7 @@ export class UserService {
       if (isUserExists) throw new ConflictException(`User #${email} already exists`);
 
       await this.awsCognitoService.signupUser({ email, password, role });
-
-      // Metodo para poder confirmar unicamente en local al usuario
-      const code = await getConfirmationCode(email);
-      if (!code) throw new NotFoundException('Confirmation code not found');
-
-      const confirmation = await this.awsCognitoService.confirmSignUp(email, code);
-      if (!confirmation) throw new BadRequestException('Confirmation failed');
+      await this.awsCognitoService.confirmSignUp(email);
 
       return await this.userRepository.save(signupUserDto);
     } catch (error) {
@@ -59,7 +57,7 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne({ id, email }: { id?: number; email?: string }): Promise<User> {
+  async findOne({ id, email }: { id?: string; email?: string }): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id, email },
     });
@@ -67,13 +65,13 @@ export class UserService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
     await this.findOne({ id });
-    await this.userRepository.update(id, updateUserDto);
-    return await this.findOne({ id });
+
+    return await this.userRepository.update(id, updateUserDto);
   }
 
-  async remove(id: number): Promise<User> {
+  async remove(id: string): Promise<User> {
     const user = await this.findOne({ id });
     await this.userRepository.remove(user);
 
