@@ -16,6 +16,7 @@ import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { USER_REPOSITORY } from './providers/user.provider';
+import { Role } from './enums/user-role.enum';
 
 @Injectable()
 export class UserService {
@@ -23,7 +24,7 @@ export class UserService {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: Repository<User>,
     private readonly awsCognitoService: AwsCognitoService,
-  ) {}
+  ) { }
 
   async signup(signupUserDto: SignUpUserDto) {
     const { email, password, role } = signupUserDto;
@@ -33,8 +34,8 @@ export class UserService {
       if (isUserExists) throw new ConflictException(`User #${email} already exists`);
 
       await this.awsCognitoService.signupUser({ email, password, role });
-
       await this.awsCognitoService.confirmSignUp(email);
+      await this.awsCognitoService.addUserToGroup(email, role);
 
       return await this.userRepository.save(signupUserDto);
     } catch (error) {

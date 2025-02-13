@@ -2,6 +2,7 @@ import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cogni
 import { envs } from 'src/config/envs';
 
 import {
+  AdminAddUserToGroupCommand,
   AdminConfirmSignUpCommand,
   AuthFlowType,
   CognitoIdentityProvider,
@@ -63,6 +64,16 @@ export class AwsCognitoService {
     });
 
     await this.cognitoIdentityProvider.send(confirmCommand);
+  }
+
+  async addUserToGroup(username: string, groupName: "admin" | "client") {
+    const addUserToGroupCommand = new AdminAddUserToGroupCommand({
+      UserPoolId: envs.AWS_COGNITO_USER_POOL_ID!,
+      Username: username,
+      GroupName: groupName,
+    });
+
+    await this.cognitoIdentityProvider.send(addUserToGroupCommand);
   }
 
   async signinUser(signinUserDto: SignInUserDto) {

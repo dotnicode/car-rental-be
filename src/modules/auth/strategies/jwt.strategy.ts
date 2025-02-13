@@ -23,15 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const user = {
-      id: payload.sub,
-      email: payload.username,
-      roles: ['user'],
-      clientId: payload.client_id,
-      scope: payload.scope,
-    };
-
-    console.log('Usuario construido en JwtStrategy:', user);
-    return user; // Este objeto debería aparecer como request.user
+    return payload;
   }
 }

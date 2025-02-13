@@ -9,23 +9,22 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
-  Req,
+  UseGuards
 } from '@nestjs/common';
 
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enum/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enum/roles.enum';
-import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post('signup')
   signup(@Body() signupUserDto: SignUpUserDto) {
@@ -57,9 +56,9 @@ export class UserController {
     return this.userService.logout();
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.ADMIN)
   @Get()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.userService.findAll();
   }
