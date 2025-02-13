@@ -9,22 +9,22 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 
-import { AuthGuard } from '@nestjs/passport';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enum/roles.enum';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post('signup')
   signup(@Body() signupUserDto: SignUpUserDto) {
@@ -57,7 +57,7 @@ export class UserController {
   }
 
   @Get()
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.CLIENT)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.userService.findAll();

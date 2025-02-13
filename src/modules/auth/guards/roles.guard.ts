@@ -1,13 +1,14 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../enum/roles.enum';
-import { ROLE_KEY } from '../decorators/roles.decorator';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLE_KEY, [
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -17,17 +18,15 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    // console.log({ request })
+    const user = request.user;
 
-    // if (!request.user) {
-    //   throw new UnauthorizedException('Usuario no autenticado');
-    // }
+    console.log('User from request:', user);
+    console.log('Required roles:', requiredRoles);
 
-    // if (!request.user.roles) {
-    //   throw new UnauthorizedException('Usuario no tiene roles definidos');
-    // }
+    if (!user || !user.roles) {
+      return false;
+    }
 
-    // return requiredRoles.some((role) => request.user.roles.includes(role));
-    return true
+    return requiredRoles.some((role) => user.roles.includes(role));
   }
 }

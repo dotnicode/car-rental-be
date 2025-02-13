@@ -7,6 +7,8 @@ import {
   AuthFlowType,
   CognitoIdentityProvider,
   InitiateAuthCommand,
+  SignUpCommand,
+  SignUpCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@nestjs/common';
 
@@ -14,6 +16,7 @@ import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import SignupResponse from './types/SignupResponse.type';
+import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AwsCognitoService {
@@ -35,26 +38,33 @@ export class AwsCognitoService {
 
   async signupUser(
     signupUserDto: Pick<SignUpUserDto, 'email' | 'password' | 'role'>,
-  ): Promise<SignupResponse> {
-    const { role, email, password } = signupUserDto;
+  ): Promise<SignUpCommandOutput> {
+    const { email, password, role = Role.CLIENT } = signupUserDto;
 
     const userAttributes = [
-      new CognitoUserAttribute({
+      {
         Name: 'email',
         Value: email,
-      }),
-      new CognitoUserAttribute({
-        Name: 'role',
+      },
+      {
+        Name: 'custom:role',
         Value: role,
-      }),
+      },
     ];
 
-    return new Promise((resolve, reject) => {
-      this.userPool.signUp(email, password, userAttributes, [], (err, result) => {
-        if (err) reject(new Error(err.message || JSON.stringify(err)));
-        resolve(result as unknown as SignupResponse);
-      });
+    const command = new SignUpCommand({
+      ClientId: envs.AWS_COGNITO_CLIENT_ID,
+      Username: email,
+      Password: password,
+      UserAttributes: userAttributes,
     });
+
+    try {
+      const response = await this.cognitoIdentityProvider.send(command);
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async confirmSignUp(username: string) {
@@ -66,7 +76,7 @@ export class AwsCognitoService {
     await this.cognitoIdentityProvider.send(confirmCommand);
   }
 
-  async addUserToGroup(username: string, groupName: "admin" | "client") {
+  async addUserToGroup(username: string, groupName: 'admin' | 'client') {
     const addUserToGroupCommand = new AdminAddUserToGroupCommand({
       UserPoolId: envs.AWS_COGNITO_USER_POOL_ID!,
       Username: username,

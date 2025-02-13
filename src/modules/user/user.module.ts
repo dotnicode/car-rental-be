@@ -13,12 +13,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 @Module({
   imports: [DatabaseModule, AuthModule],
   controllers: [UserController],
-  providers: [
-    UserService,
-    ...userProvider,
-    AwsCognitoService,
-    { provide: APP_GUARD, useClass: RolesGuard },
-  ],
+  providers: [UserService, ...userProvider, AwsCognitoService],
   exports: [],
 })
 export class UserModule {}
