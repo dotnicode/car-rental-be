@@ -39,5 +39,5 @@ services:
     environment:
       - SERVICES=cognito-idp
     volumes:
-      - ./data/config/config.json:/app/.cognito/config.json
+      - ./binds/cognito-local/config.json:/app/.cognito/config.json
       - ./data/cognito-local:/app/.cognito/db
