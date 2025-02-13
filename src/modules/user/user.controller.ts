@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
@@ -17,8 +18,10 @@ import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { DebugGuard } from '../auth/debug.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enum/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('user')
 export class UserController {
@@ -54,13 +57,13 @@ export class UserController {
     return this.userService.logout();
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.ADMIN)
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
-  @UseGuards(DebugGuard, AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.findOne({ id });

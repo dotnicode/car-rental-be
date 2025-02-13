@@ -1,19 +1,24 @@
 import { DatabaseModule } from 'src/database/database.module';
 
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 
 import { AuthModule } from '../auth/auth.module';
-import { JwtStrategy } from '../auth/jwt.strategy';
 import { AwsCognitoService } from './aws-cognito.service';
 import { userProvider } from './providers/user.provider';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
   controllers: [UserController],
-  providers: [UserService, ...userProvider, AwsCognitoService],
+  providers: [
+    UserService,
+    ...userProvider,
+    AwsCognitoService,
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
   exports: [],
 })
 export class UserModule {}

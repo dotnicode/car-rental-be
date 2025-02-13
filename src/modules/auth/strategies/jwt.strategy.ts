@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { envs } from 'src/config/envs';
 
 @Injectable()
@@ -23,6 +23,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { idUser: payload.sub, email: payload.email };
+    const user = {
+      id: payload.sub,
+      email: payload.username,
+      roles: ['user'],
+      clientId: payload.client_id,
+      scope: payload.scope,
+    };
+
+    console.log('Usuario construido en JwtStrategy:', user);
+    return user; // Este objeto debería aparecer como request.user
   }
 }
