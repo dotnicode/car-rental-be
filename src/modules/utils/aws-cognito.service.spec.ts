@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AwsCognitoService } from '../aws-cognito.service';
+import { AwsCognitoService } from './aws-cognito.service';
 
 describe('AwsCognitoService', () => {
   let service: AwsCognitoService;

@@ -12,10 +12,9 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@nestjs/common';
 
-import { RecoverUserPasswordDto } from './dto/recover-password.dto';
-import { SignInUserDto } from './dto/signin-user-dto';
-import { SignUpUserDto } from './dto/signup-user.dto';
-import SignupResponse from './types/SignupResponse.type';
+import { RecoverUserPasswordDto } from '../user/dto/recover-password.dto';
+import { SignInUserDto } from '../user/dto/signin-user-dto';
+import { SignUpUserDto } from '../user/dto/signup-user.dto';
 import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()

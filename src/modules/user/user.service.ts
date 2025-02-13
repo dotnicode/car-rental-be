@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { AwsCognitoService } from './aws-cognito.service';
+import { AwsCognitoService } from '../utils/aws-cognito.service';
 import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 import { SignInUserDto } from './dto/signin-user-dto';
 import { SignUpUserDto } from './dto/signup-user.dto';
