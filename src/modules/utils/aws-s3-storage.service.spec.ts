@@ -5,7 +5,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { Test, TestingModule } from '@nestjs/testing';
 
 import IFileUploadResult from './interfaces/file-upload-result.interface';
-import { S3StorageService } from './s3-storage.service';
+import { S3StorageService } from './aws-s3-storage.service';
 
 jest.mock('@aws-sdk/client-s3');
 jest.mock('crypto', () => ({
@@ -60,9 +60,7 @@ describe('S3StorageService', () => {
     it('should delete a file from S3', async () => {
       (s3Client.send as jest.Mock).mockResolvedValue({});
       await service.deleteFile('mocked-uuid');
-      expect(s3Client.send).toHaveBeenCalledWith(
-        expect.any(DeleteObjectCommand),
-      );
+      expect(s3Client.send).toHaveBeenCalledWith(expect.any(DeleteObjectCommand));
     });
   });
 });

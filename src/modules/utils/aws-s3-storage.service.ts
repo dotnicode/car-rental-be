@@ -1,11 +1,7 @@
 import { randomUUID } from 'crypto';
 import { envs } from 'src/config/envs';
 
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 
 import IFileUploadResult from './interfaces/file-upload-result.interface';

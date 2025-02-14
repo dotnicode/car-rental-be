@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CarService } from '../car/car.service';
-import { S3StorageService } from '../utils/s3-storage.service';
+import { S3StorageService } from '../utils/aws-s3-storage.service';
 import { UploadPictureDto } from './dto/upload-picture.dto';
 import { Picture } from './entities/picture.entity';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
@@ -18,10 +18,7 @@ export class PictureService {
     private readonly carService: CarService,
   ) {}
 
-  async upload(
-    file: Express.Multer.File,
-    uploadPictureDto: UploadPictureDto,
-  ): Promise<Picture> {
+  async upload(file: Express.Multer.File, uploadPictureDto: UploadPictureDto): Promise<Picture> {
     try {
       const car = await this.carService.findOne(uploadPictureDto.carId);
 

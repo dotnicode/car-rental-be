@@ -3,7 +3,7 @@ import { PictureService } from './picture.service';
 import { PictureType } from './enums/picture-type.enum';
 import { Repository } from 'typeorm';
 import { Picture } from './entities/picture.entity';
-import { S3StorageService } from '../utils/s3-storage.service';
+import { S3StorageService } from '../utils/aws-s3-storage.service';
 import { CarService } from '../car/car.service';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
 
@@ -92,9 +92,7 @@ describe('PictureService', () => {
 
       const result = await service.upload(mockFile, uploadPictureDto);
 
-      expect(mockCarService.findOne).toHaveBeenCalledWith(
-        uploadPictureDto.carId,
-      );
+      expect(mockCarService.findOne).toHaveBeenCalledWith(uploadPictureDto.carId);
       expect(mockS3StorageService.uploadFile).toHaveBeenCalledWith(mockFile);
       expect(mockPictureRepository.save).toHaveBeenCalledWith({
         ...uploadPictureDto,
@@ -124,9 +122,7 @@ describe('PictureService', () => {
 
       mockCarService.findOne.mockRejectedValue(new Error('Car not found'));
 
-      await expect(service.upload(mockFile, uploadPictureDto)).rejects.toThrow(
-        'Car not found',
-      );
+      await expect(service.upload(mockFile, uploadPictureDto)).rejects.toThrow('Car not found');
     });
 
     it('should handle upload failure', async () => {
@@ -150,13 +146,9 @@ describe('PictureService', () => {
       const car = { id: uploadPictureDto.carId };
       mockCarService.findOne.mockResolvedValue(car);
 
-      mockS3StorageService.uploadFile.mockRejectedValue(
-        new Error('Upload failed'),
-      );
+      mockS3StorageService.uploadFile.mockRejectedValue(new Error('Upload failed'));
 
-      await expect(service.upload(mockFile, uploadPictureDto)).rejects.toThrow(
-        'Upload failed',
-      );
+      await expect(service.upload(mockFile, uploadPictureDto)).rejects.toThrow('Upload failed');
     });
   });
 
@@ -187,9 +179,7 @@ describe('PictureService', () => {
       const pictureId = '999';
       mockPictureRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.remove(pictureId)).rejects.toThrow(
-        'Picture not found',
-      );
+      await expect(service.remove(pictureId)).rejects.toThrow('Picture not found');
     });
 
     it('should handle S3 deletion failure', async () => {
@@ -201,9 +191,7 @@ describe('PictureService', () => {
       };
 
       mockPictureRepository.findOne.mockResolvedValue(picture);
-      mockS3StorageService.deleteFile.mockRejectedValue(
-        new Error('Delete failed'),
-      );
+      mockS3StorageService.deleteFile.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.remove(pictureId)).rejects.toThrow('Delete failed');
     });

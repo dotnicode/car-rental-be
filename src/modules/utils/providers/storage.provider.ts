@@ -1,4 +1,4 @@
-import { S3StorageService } from '../s3-storage.service';
+import { S3StorageService } from '../aws-s3-storage.service';
 
 export const STORAGE_SERVICE = 'STORAGE_SERVICE';
 
