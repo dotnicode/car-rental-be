@@ -9,7 +9,7 @@ import IStorageService from './interfaces/storage-service.interface';
 import { S3ConfigProvider } from './providers/s3.provider';
 
 @Injectable()
-export class S3StorageService implements IStorageService {
+export class AWSS3StorageService implements IStorageService {
   constructor(private readonly s3Provider: S3ConfigProvider) {}
 
   async uploadFile(file: Express.Multer.File): Promise<IFileUploadResult> {

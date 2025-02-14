@@ -5,21 +5,21 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { Test, TestingModule } from '@nestjs/testing';
 
 import IFileUploadResult from './interfaces/file-upload-result.interface';
-import { S3StorageService } from './aws-s3-storage.service';
+import { AWSS3StorageService } from './aws-s3-storage.service';
 
 jest.mock('@aws-sdk/client-s3');
 jest.mock('crypto', () => ({
   randomUUID: jest.fn(() => 'mocked-uuid'),
 }));
 
-describe('S3StorageService', () => {
-  let service: S3StorageService;
+describe('AWSS3StorageService', () => {
+  let service: AWSS3StorageService;
   let s3Client: S3Client;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        S3StorageService,
+        AWSS3StorageService,
         {
           provide: S3Client,
           useValue: {
@@ -29,7 +29,7 @@ describe('S3StorageService', () => {
       ],
     }).compile();
 
-    service = module.get<S3StorageService>(S3StorageService);
+    service = module.get<AWSS3StorageService>(AWSS3StorageService);
     s3Client = module.get<S3Client>(S3Client);
   });
 
