@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CarService } from '../car/car.service';
-import { S3StorageService } from '../utils/aws-s3-storage.service';
+import { AWSS3StorageService } from '../utils/aws-s3-storage.service';
 import { UploadPictureDto } from './dto/upload-picture.dto';
 import { Picture } from './entities/picture.entity';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
@@ -13,7 +13,7 @@ export class PictureService {
   constructor(
     @Inject(PICTURE_REPOSITORY)
     private readonly pictureRepository: Repository<Picture>,
-    private readonly s3StorageService: S3StorageService,
+    private readonly s3StorageService: AWSS3StorageService,
     @Inject(forwardRef(() => CarService))
     private readonly carService: CarService,
   ) {}

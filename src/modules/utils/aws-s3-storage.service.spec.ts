@@ -4,8 +4,8 @@ import { envs } from 'src/config/envs';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import IFileUploadResult from './interfaces/file-upload-result.interface';
 import { AWSS3StorageService } from './aws-s3-storage.service';
+import IFileUploadResult from './interfaces/file-upload-result.interface';
 
 jest.mock('@aws-sdk/client-s3');
 jest.mock('crypto', () => ({
