@@ -81,10 +81,9 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { email: recoverPasswordDto.email },
     });
-
     if (!user) throw new NotFoundException('User not found');
 
-    await this.awsCognitoService.recoverPassword(recoverPasswordDto);
+    this.awsCognitoService.recoverPassword(recoverPasswordDto);
 
     return { message: 'Password updated successfully' };
   }

@@ -5,6 +5,7 @@ import {
   AdminAddUserToGroupCommand,
   AdminConfirmSignUpCommand,
   AuthFlowType,
+  ChangePasswordCommand,
   CognitoIdentityProvider,
   InitiateAuthCommand,
   SignUpCommand,
@@ -110,24 +111,16 @@ export class AwsCognitoService {
     }
   }
 
-  recoverPassword(recoverPasswordDto: RecoverUserPasswordDto) {
-    const { email, currentPassword, newPassword } = recoverPasswordDto;
+  async recoverPassword(recoverPasswordDto: RecoverUserPasswordDto) {
+    const { currentPassword, newPassword, accessToken } = recoverPasswordDto;
 
-    const userCognito = new CognitoUser({
-      Username: email,
-      Pool: this.userPool,
+    const command = new ChangePasswordCommand({
+      PreviousPassword: currentPassword,
+      ProposedPassword: newPassword,
+      AccessToken: accessToken,
     });
 
-    return new Promise((resolve, reject) => {
-      userCognito.forgotPassword({
-        onSuccess: (result) => {
-          resolve(result);
-        },
-        onFailure: (err: Error) => {
-          reject(new Error(err.message || 'Recover password failed'));
-        },
-      });
-    });
+    await this.cognitoIdentityProvider.send(command);
   }
 
   logout() {
