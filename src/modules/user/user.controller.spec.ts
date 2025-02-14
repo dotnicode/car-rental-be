@@ -1,17 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AwsCognitoService } from '../aws-cognito.service';
-import { RecoverUserPasswordDto } from '../dto/recover-password.dto';
-import { SignInUserDto } from '../dto/signin-user-dto';
-import { SignUpUserDto } from '../dto/signup-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { Role } from '../enums/user-role.enum';
-import { UserController } from '../user.controller';
-import { UserService } from '../user.service';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+import { AwsCognitoService } from '../utils/aws-cognito.service';
+import { Role } from 'src/common/enums/role.enum';
+import { SignUpUserDto } from './dto/signup-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { SignInUserDto } from './dto/signin-user-dto';
+import { RecoverUserPasswordDto } from './dto/recover-password.dto';
 
 describe('UserController', () => {
   let controller: UserController;
   let service: UserService;
-
   const mockUserService = {
     signup: jest.fn(),
     signin: jest.fn(),
@@ -84,11 +83,9 @@ describe('UserController', () => {
       };
 
       const expectedResponse = {
-        cognitoResponse: {
-          accessToken: 'mockAccessToken',
-          refreshToken: 'mockRefreshToken',
-          idToken: 'mockIdToken',
-        },
+        accessToken: 'mockAccessToken',
+        refreshToken: 'mockRefreshToken',
+        idToken: 'mockIdToken',
       };
 
       mockUserService.signin.mockResolvedValue(expectedResponse);
@@ -106,6 +103,7 @@ describe('UserController', () => {
         email: 'test@example.com',
         currentPassword: 'oldPassword',
         newPassword: 'newPassword',
+        accessToken: '#mockAccessToken!',
       };
 
       const expectedResult = { message: 'Password updated successfully' };

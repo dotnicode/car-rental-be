@@ -1,18 +1,18 @@
 import {
+  BadRequestException,
   ConflictException,
   NotFoundException,
   UnauthorizedException,
-  BadRequestException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository } from 'typeorm';
-import { AdminConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 
-import { AwsCognitoService } from '../aws-cognito.service';
-import { User } from '../entities/user.entity';
-import { USER_REPOSITORY } from '../providers/user.provider';
-import { UserService } from '../user.service';
-import { Role } from '../enums/user-role.enum';
+import { User } from './entities/user.entity';
+import { USER_REPOSITORY } from './providers/user.provider';
+import { UserService } from './user.service';
+
+import { AwsCognitoService } from '../utils/aws-cognito.service';
+import { Role } from 'src/common/enums/role.enum';
 
 describe('UserService', () => {
   let service: UserService;
@@ -140,7 +140,7 @@ describe('UserService', () => {
 
       const result = await service.signin(signinDto);
 
-      expect(result).toEqual({ cognitoResponse: mockCognitoResponse });
+      expect(result).toEqual(mockCognitoResponse);
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: signinDto.email },
       });
@@ -228,6 +228,7 @@ describe('UserService', () => {
       email: 'test@example.com',
       currentPassword: 'oldPassword',
       newPassword: 'newPassword',
+      accessToken: '#mockAccessToken!',
     };
 
     it('should initiate password recovery', async () => {
