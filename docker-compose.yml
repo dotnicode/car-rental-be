@@ -15,15 +15,29 @@ services:
     image: localstack/localstack
     restart: always
     ports:
-      - '4566:4566'
+      - 4566:4566
     environment:
-      - SERVICES=s3
+      - SERVICES=s3,sts,cognito-idp
       - DEFAULT_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
       - DEBUG=1
       - PERSIST_DATA=1
     volumes:
-      - './data/localstack:/docker-entrypoint-initaws.d'
-      - './data/localstack:/var/lib/localstack/state'
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - ./data/localstack:/docker-entrypoint-initaws.d
+      - ./data/localstack:/var/lib/localstack/state
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  cognito-local:
+    image: jagregory/cognito-local
+    restart: always
+    ports:
+      - 9229:9229
+    environment:
+      - SERVICES=cognito-idp
+    volumes:
+      # - ./binds/cognito-local/config.json:/app/.cognito/config.json
+      - ./data/cognito:/app/.cognito/

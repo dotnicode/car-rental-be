@@ -13,7 +13,7 @@ export class S3ConfigProvider {
   private readonly _bucketName: string;
 
   constructor() {
-    this._bucketName = envs.AWS_S3_BUCKET_NAME;
+    this._bucketName = envs.AWS_BUCKET_NAME;
     this._s3 = new S3Client({
       credentials: {
         accessKeyId: envs.AWS_ACCESS_KEY_ID,

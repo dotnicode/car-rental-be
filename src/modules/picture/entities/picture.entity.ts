@@ -1,11 +1,6 @@
 import { Car } from 'src/modules/car/entities/car.entity';
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
 import { PictureType } from '../enums/picture-type.enum';
 

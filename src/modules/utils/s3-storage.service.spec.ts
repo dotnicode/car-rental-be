@@ -51,7 +51,7 @@ describe('S3StorageService', () => {
       expect(s3Client.send).toHaveBeenCalledWith(expect.any(PutObjectCommand));
       expect(result).toEqual({
         fileKey: 'mocked-uuid',
-        fileUrl: `http://${envs.AWS_ENDPOINT}/${envs.AWS_S3_BUCKET_NAME}/mocked-uuid`,
+        fileUrl: `http://${envs.AWS_ENDPOINT}/${envs.AWS_BUCKET_NAME}/mocked-uuid`,
       });
     });
   });

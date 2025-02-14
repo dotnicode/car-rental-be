@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { FindOptionsRelations, Repository } from 'typeorm';
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
@@ -27,10 +28,7 @@ export class CarService {
     return await this.carRepository.find({ relations: { pictures: true } });
   }
 
-  async findOne(
-    id: string,
-    relations: FindOptionsRelations<Car> = { pictures: true },
-  ) {
+  async findOne(id: string, relations: FindOptionsRelations<Car> = { pictures: true }) {
     try {
       const car = await this.carRepository.findOne({
         where: { id },
@@ -55,11 +53,7 @@ export class CarService {
       .map((picture) => picture.id);
 
     if (picturesToDelete.length > 0) {
-      await Promise.all(
-        picturesToDelete.map((pictureId) =>
-          this.pictureService.remove(pictureId),
-        ),
-      );
+      await Promise.all(picturesToDelete.map((pictureId) => this.pictureService.remove(pictureId)));
     }
 
     Object.assign(car, {
@@ -75,9 +69,7 @@ export class CarService {
     const pictureIds = car.pictures?.map((picture) => picture.id);
 
     if (pictureIds) {
-      await Promise.all(
-        pictureIds.map((pictureId) => this.pictureService.remove(pictureId)),
-      );
+      await Promise.all(pictureIds.map((pictureId) => this.pictureService.remove(pictureId)));
     }
 
     await this.carRepository.delete(id);

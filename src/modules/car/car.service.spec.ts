@@ -115,9 +115,7 @@ describe('CarService', () => {
 
       mockCarRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne(carId)).rejects.toThrow(
-        CarNotFoundException,
-      );
+      await expect(service.findOne(carId)).rejects.toThrow(CarNotFoundException);
     });
 
     it('should throw DatabaseException for database errors', async () => {
@@ -144,10 +142,7 @@ describe('CarService', () => {
       const result = await service.update(carId, updateCarDto);
 
       expect(result).toEqual(expectedCar);
-      expect(mockCarRepository.update).toHaveBeenCalledWith(
-        carId,
-        updateCarDto,
-      );
+      expect(mockCarRepository.update).toHaveBeenCalledWith(carId, updateCarDto);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
       });
