@@ -1,12 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { FileType } from 'src/common/enums/file-type.enum';
+import { DatabaseException } from 'src/common/exceptions/database.exception';
 import { Repository } from 'typeorm';
 import { CarService } from '../car/car.service';
+import { CarNotFoundException } from '../car/exceptions/car-not-found.exception';
 import { AWSS3StorageService } from '../utils/aws-s3-storage.service';
 import { UploadPictureDto } from './dto/upload-picture.dto';
 import { Picture } from './entities/picture.entity';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
-import { DatabaseException } from 'src/common/exceptions/database.exception';
-import { CarNotFoundException } from '../car/exceptions/car-not-found.exception';
 
 @Injectable()
 export class PictureService {
@@ -22,7 +23,7 @@ export class PictureService {
     try {
       const car = await this.carService.findOne(uploadPictureDto.carId);
 
-      const { fileUrl, fileKey } = await this.s3StorageService.uploadFile(file);
+      const { fileUrl, fileKey } = await this.s3StorageService.uploadFile(file, FileType.PICTURE);
 
       return await this.pictureRepository.save({
         ...uploadPictureDto,
