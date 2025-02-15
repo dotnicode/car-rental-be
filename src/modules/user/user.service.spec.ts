@@ -99,7 +99,7 @@ describe('UserService', () => {
       mockUserRepository.findOne.mockResolvedValue(signupDto);
 
       await expect(service.signup(signupDto)).rejects.toThrow(
-        new ConflictException(`User #${signupDto.email} already exists`),
+        new ConflictException(`User ${signupDto.email.split('@')[0]} already exists`),
       );
     });
 
@@ -135,6 +135,7 @@ describe('UserService', () => {
       mockUserRepository.findOne.mockResolvedValue({
         id: '1',
         email: signinDto.email,
+        documents: [],
       });
       mockAwsCognitoService.signinUser.mockResolvedValue(mockCognitoResponse);
 
@@ -143,6 +144,7 @@ describe('UserService', () => {
       expect(result).toEqual(mockCognitoResponse);
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: signinDto.email },
+        relations: ['documents'],
       });
     });
 
@@ -150,6 +152,7 @@ describe('UserService', () => {
       mockUserRepository.findOne.mockResolvedValue({
         id: '1',
         email: signinDto.email,
+        documents: [],
       });
       mockAwsCognitoService.signinUser.mockRejectedValue(new Error('Invalid credentials'));
 

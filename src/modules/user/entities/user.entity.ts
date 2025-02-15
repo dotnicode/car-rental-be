@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Role } from 'src/common/enums/role.enum';
+import { Document } from 'src/modules/document/entities/document.entity';
 
 @Entity()
 export class User {
@@ -47,10 +49,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Todo: relationships will be added soon
-  // @OneToMany(() => Document, (document) => document.user)
-  // documents: Document[];
+  @OneToMany(() => Document, (document) => document.user)
+  documents: Document[];
 
+  // Task: relationships will be added soon
   // @OneToMany(() => Rent, (rent) => rent.user)
   // rents: Rent[];
 }

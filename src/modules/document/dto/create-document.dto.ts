@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateDocumentDto {
   @IsString()
@@ -6,4 +6,7 @@ export class CreateDocumentDto {
 
   @IsString()
   description: string;
+
+  @IsUUID()
+  userId: string;
 }

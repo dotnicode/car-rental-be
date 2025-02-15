@@ -1,8 +1,8 @@
+import { FileType } from 'src/common/enums/file-type.enum';
 import { Repository } from 'typeorm';
 
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
-import { FileType } from 'src/common/enums/file-type.enum';
 import { AWSS3StorageService } from '../utils/aws-s3-storage.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { Document } from './entities/document.entity';
@@ -16,31 +16,24 @@ export class DocumentService {
     private readonly storageService: AWSS3StorageService,
   ) {}
 
-  async create(file: Express.Multer.File, createDocumentDto: CreateDocumentDto) {
-    try {
-      const { fileKey, fileUrl } = await this.storageService.uploadFile(file, FileType.DOCUMENT);
+  async create(file: Express.Multer.File, createDocumentDto: CreateDocumentDto): Promise<Document> {
+    const { fileKey, fileUrl } = await this.storageService.uploadFile(file, FileType.DOCUMENT);
 
-      const document = await this.documentRepository.save({
-        ...createDocumentDto,
-        url: fileUrl,
-        src: fileKey,
-      });
+    const document = await this.documentRepository.save({
+      ...createDocumentDto,
+      url: fileUrl,
+      src: fileKey,
+      user: { id: createDocumentDto.userId },
+    });
 
-      return document;
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw new BadRequestException(error.message);
-      }
-
-      throw new Error('Upload failed');
-    }
+    return document;
   }
 
-  async findAll() {
+  async findAll(): Promise<Document[]> {
     return await this.documentRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Document> {
     const document = await this.documentRepository.findOne({ where: { id } });
 
     if (!document) {
@@ -50,7 +43,7 @@ export class DocumentService {
     return document;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<{ message: string }> {
     const result = await this.documentRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Document with ID ${id} not found`);

@@ -1,9 +1,8 @@
-import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
+
 
 import {
-    BadRequestException, Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe,
-    ParseUUIDPipe, Post, UploadedFile, UseInterceptors
+  Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseUUIDPipe, Post,
+  UploadedFile, UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 

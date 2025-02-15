@@ -57,8 +57,8 @@ export class UserController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.CLIENT)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(Role.ADMIN, Role.CLIENT)
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
   findAll() {
     return this.userService.findAll();
   }

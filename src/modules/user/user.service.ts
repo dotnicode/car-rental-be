@@ -30,11 +30,10 @@ export class UserService {
 
     try {
       const isUserExists = await this.userRepository.findOne({ where: { email } });
-      if (isUserExists) throw new ConflictException(`User #${email} already exists`);
+      if (isUserExists) throw new ConflictException(`User ${email.split('@')[0]} already exists`);
 
       await this.awsCognitoService.signupUser({ email, password, role });
       await this.awsCognitoService.confirmSignUp(email);
-      // await this.awsCognitoService.addUserToGroup(email, role);
 
       return await this.userRepository.save(signupUserDto);
     } catch (error) {
@@ -53,12 +52,13 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['documents'] });
   }
 
   async findOne({ id, email }: { id?: string; email?: string }): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id, email },
+      relations: ['documents'],
     });
     if (!user) throw new NotFoundException(`User #${id} not found`);
     return user;

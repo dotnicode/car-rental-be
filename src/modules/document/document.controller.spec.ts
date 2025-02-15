@@ -1,3 +1,5 @@
+import { Role } from 'src/common/enums/role.enum';
+
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DocumentController } from './document.controller';
@@ -46,6 +48,7 @@ describe('DocumentController', () => {
       const createDocumentDto: CreateDocumentDto = {
         title: 'Test Document',
         description: 'Test Description',
+        userId: '1',
       };
 
       const expectedDocument = {
@@ -108,6 +111,18 @@ describe('DocumentController', () => {
         src: 'test',
         createdAt: new Date(),
         updatedAt: new Date(),
+        user: {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+          password: 'password',
+          dob: new Date(),
+          role: Role.CLIENT,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          documents: [],
+        },
       };
 
       mockDocumentService.findOne.mockResolvedValue(mockDocument);

@@ -1,3 +1,6 @@
+import { FileType } from 'src/common/enums/file-type.enum';
+import { Role } from 'src/common/enums/role.enum';
+
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -6,7 +9,6 @@ import { DocumentService } from './document.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { Document } from './entities/document.entity';
 import { DOCUMENT_REPOSITORY } from './providers/document.provider';
-import { FileType } from 'src/common/enums/file-type.enum';
 
 describe('DocumentService', () => {
   let service: DocumentService;
@@ -45,17 +47,21 @@ describe('DocumentService', () => {
   });
 
   describe('create', () => {
-    it('should create a document', async () => {
-      const file = {
+    const createTestFile = (name: string, type: string): Express.Multer.File =>
+      ({
         buffer: Buffer.from('test'),
-        originalname: 'test.pdf',
-        mimetype: 'application/pdf',
-      } as Express.Multer.File;
+        originalname: name,
+        mimetype: type,
+      }) as Express.Multer.File;
 
-      const createDocumentDto: CreateDocumentDto = {
-        title: 'Test Document',
-        description: 'Test Description',
-      };
+    const createDocumentDto: CreateDocumentDto = {
+      title: 'Test Document',
+      description: 'Test Description',
+      userId: '1',
+    };
+
+    it('should create a document', async () => {
+      const file = createTestFile('test.pdf', 'application/pdf');
 
       const storageResponse = {
         fileKey: 'test',
@@ -66,6 +72,7 @@ describe('DocumentService', () => {
         ...createDocumentDto,
         src: storageResponse.fileKey,
         url: storageResponse.fileUrl,
+        user: { id: createDocumentDto.userId },
       };
 
       const expectedDocument = {
@@ -73,6 +80,7 @@ describe('DocumentService', () => {
         ...documentToSave,
         createdAt: new Date(),
         updatedAt: new Date(),
+        user: { id: createDocumentDto.userId },
       };
 
       mockStorageService.uploadFile.mockResolvedValue(storageResponse);
@@ -86,22 +94,8 @@ describe('DocumentService', () => {
     });
 
     it('should throw an error if the file type is not allowed', async () => {
-      const txtFile = {
-        buffer: Buffer.from('test'),
-        originalname: 'test.txt',
-        mimetype: 'text/plain',
-      } as Express.Multer.File;
-
-      const imageFile = {
-        buffer: Buffer.from('test'),
-        originalname: 'test.jpg',
-        mimetype: 'image/jpeg',
-      } as Express.Multer.File;
-
-      const createDocumentDto: CreateDocumentDto = {
-        title: 'Test Wrong Document',
-        description: 'Test Wrong Description',
-      };
+      const txtFile = createTestFile('test.txt', 'text/plain');
+      const imageFile = createTestFile('test.jpg', 'image/jpeg');
 
       mockStorageService.uploadFile.mockRejectedValue(
         new BadRequestException('File type not allowed for document'),
@@ -117,28 +111,12 @@ describe('DocumentService', () => {
     });
 
     it('should accept PDF and DOCX files', async () => {
-      const pdfFile = {
-        buffer: Buffer.from('test'),
-        originalname: 'test.pdf',
-        mimetype: 'application/pdf',
-      } as Express.Multer.File;
-
-      const docxFile = {
-        buffer: Buffer.from('test'),
-        originalname: 'test.docx',
-        mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      } as Express.Multer.File;
-
-      const docFile = {
-        buffer: Buffer.from('test'),
-        originalname: 'test.doc',
-        mimetype: 'application/msword',
-      } as Express.Multer.File;
-
-      const createDocumentDto: CreateDocumentDto = {
-        title: 'Test Document',
-        description: 'Test Description',
-      };
+      const pdfFile = createTestFile('test.pdf', 'application/pdf');
+      const docxFile = createTestFile(
+        'test.docx',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      );
+      const docFile = createTestFile('test.doc', 'application/msword');
 
       const storageResponse = {
         fileKey: 'test',
@@ -221,6 +199,18 @@ describe('DocumentService', () => {
       src: 'test',
       createdAt: new Date(),
       updatedAt: new Date(),
+      user: {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        password: 'password',
+        dob: new Date(),
+        role: Role.CLIENT,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        documents: [],
+      },
     };
 
     it('should return a document by id', async () => {
