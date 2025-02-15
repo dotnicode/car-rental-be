@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto';
+import { FileType } from 'src/common/enums/file-type.enum';
 import { envs } from 'src/config/envs';
 
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { FileType } from 'src/common/enums/file-type.enum';
 import { FileValidatorService } from './file-validator.service';
 import IFileUploadResult from './interfaces/file-upload-result.interface';
 import IStorageService from './interfaces/storage-service.interface';

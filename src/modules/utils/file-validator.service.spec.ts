@@ -1,7 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
-import { FileValidatorService } from './file-validator.service';
 import { FileType } from 'src/common/enums/file-type.enum';
+
+import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { FileValidatorService } from './file-validator.service';
 
 describe('FileValidatorService', () => {
   let service: FileValidatorService;
