@@ -3,11 +3,11 @@
   "material-icon-theme.folders.theme": "classic",
   "importSorter.importStringConfiguration.quoteMark": "single",
   "workbench.colorCustomizations": {
-    "statusBar.background": "#e0234e",
+    "statusBar.background": "#490a14",
     "statusBar.foreground": "#e7e7e7",
-    "statusBarItem.hoverBackground": "#e65072",
-    "statusBarItem.remoteBackground": "#e0234e",
+    "statusBarItem.hoverBackground": "#761020",
+    "statusBarItem.remoteBackground": "#490a14",
     "statusBarItem.remoteForeground": "#e7e7e7"
   },
-  "peacock.remoteColor": "#E0234E"
+  "peacock.remoteColor": "#490a14"
 }

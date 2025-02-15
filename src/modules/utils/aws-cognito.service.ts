@@ -1,22 +1,16 @@
 import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js';
+import { Role } from 'src/common/enums/role.enum';
 import { envs } from 'src/config/envs';
 
 import {
-  AdminAddUserToGroupCommand,
-  AdminConfirmSignUpCommand,
-  AuthFlowType,
-  ChangePasswordCommand,
-  CognitoIdentityProvider,
-  InitiateAuthCommand,
-  SignUpCommand,
-  SignUpCommandOutput,
+    AdminAddUserToGroupCommand, AdminConfirmSignUpCommand, AuthFlowType, ChangePasswordCommand,
+    CognitoIdentityProvider, InitiateAuthCommand, SignUpCommand, SignUpCommandOutput
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@nestjs/common';
 
 import { RecoverUserPasswordDto } from '../user/dto/recover-password.dto';
 import { SignInUserDto } from '../user/dto/signin-user-dto';
 import { SignUpUserDto } from '../user/dto/signup-user.dto';
-import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AwsCognitoService {
