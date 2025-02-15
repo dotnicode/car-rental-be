@@ -28,24 +28,16 @@ describe('CarController', () => {
   const mockCarService = {
     create: jest.fn().mockResolvedValue(mockCar),
     findAll: jest.fn().mockResolvedValue([mockCar]),
-    findOne: jest
-      .fn<Promise<Car | null>, [string]>()
-      .mockImplementation((id) => {
-        return id === '1'
-          ? Promise.resolve(mockCar)
-          : Promise.reject(new CarNotFoundException(id));
-      }),
+    findOne: jest.fn<Promise<Car | null>, [string]>().mockImplementation((id) => {
+      return id === '1' ? Promise.resolve(mockCar) : Promise.reject(new CarNotFoundException(id));
+    }),
     update: jest
       .fn<Promise<Car | null>, [string, UpdateCarDto]>()
       .mockImplementation((id, updateCarDto) => {
-        return id === '1'
-          ? Promise.resolve(mockCar)
-          : Promise.reject(new CarNotFoundException(id));
+        return id === '1' ? Promise.resolve(mockCar) : Promise.reject(new CarNotFoundException(id));
       }),
     remove: jest.fn<Promise<void>, [string]>().mockImplementation((id) => {
-      return id === '1'
-        ? Promise.resolve(undefined)
-        : Promise.reject(new CarNotFoundException(id));
+      return id === '1' ? Promise.resolve(undefined) : Promise.reject(new CarNotFoundException(id));
     }),
   };
 
@@ -69,7 +61,7 @@ describe('CarController', () => {
   });
 
   describe('create', () => {
-    it('debería llamar a service.create con los parámetros correctos y devolver el resultado', async () => {
+    it('should call service.create with correct parameters and return the result', async () => {
       const createCarDto: CreateCarDto = {
         brand: 'Toyota',
         model: 'Corolla',
@@ -87,7 +79,7 @@ describe('CarController', () => {
   });
 
   describe('findAll', () => {
-    it('debería devolver todos los autos disponibles', async () => {
+    it('should return all available cars', async () => {
       const cars = await controller.findAll();
       expect(cars).toEqual([mockCar]);
       expect(mockCarService.findAll).toHaveBeenCalled();
@@ -95,21 +87,19 @@ describe('CarController', () => {
   });
 
   describe('findOne', () => {
-    it('debería devolver un auto cuando existe', async () => {
+    it('should return a car when it exists', async () => {
       const car = await controller.findOne('1');
       expect(car).toEqual(mockCar);
       expect(mockCarService.findOne).toHaveBeenCalledWith('1');
     });
 
-    it('debería lanzar CarNotFoundException cuando el auto no existe', async () => {
-      await expect(controller.findOne('999')).rejects.toThrow(
-        CarNotFoundException,
-      );
+    it('should throw CarNotFoundException when car does not exist', async () => {
+      await expect(controller.findOne('999')).rejects.toThrow(CarNotFoundException);
     });
   });
 
   describe('update', () => {
-    it('debería actualizar un auto cuando existe', async () => {
+    it('should update a car when it exists', async () => {
       const updateCarDto: UpdateCarDto = {
         brand: 'Octane',
         model: 'Classic',
@@ -119,24 +109,20 @@ describe('CarController', () => {
       expect(mockCarService.update).toHaveBeenCalledWith('1', updateCarDto);
     });
 
-    it('debería lanzar CarNotFoundException cuando el auto a actualizar no existe', async () => {
+    it('should throw CarNotFoundException when car to update does not exist', async () => {
       const updateCarDto: UpdateCarDto = { brand: 'New' };
-      await expect(controller.update('999', updateCarDto)).rejects.toThrow(
-        CarNotFoundException,
-      );
+      await expect(controller.update('999', updateCarDto)).rejects.toThrow(CarNotFoundException);
     });
   });
 
   describe('remove', () => {
-    it('debería eliminar un auto cuando existe', async () => {
+    it('should remove a car when it exists', async () => {
       await controller.remove('1');
       expect(mockCarService.remove).toHaveBeenCalledWith('1');
     });
 
-    it('debería lanzar CarNotFoundException cuando el auto a eliminar no existe', async () => {
-      await expect(controller.remove('999')).rejects.toThrow(
-        CarNotFoundException,
-      );
+    it('should throw CarNotFoundException when car to remove does not exist', async () => {
+      await expect(controller.remove('999')).rejects.toThrow(CarNotFoundException);
     });
   });
 });

@@ -8,6 +8,8 @@ import { CreateCarDto } from './dto/create-car.dto';
 import { Car } from './entities/car.entity';
 import { CarNotFoundException } from './exceptions/car-not-found.exception';
 import { CAR_REPOSITORY } from './providers/car.provider';
+import { PictureService } from '../picture/picture.service';
+import { forwardRef } from '@nestjs/common';
 
 describe('CarService', () => {
   let service: CarService;
@@ -35,6 +37,14 @@ describe('CarService', () => {
     delete: jest.fn(),
   };
 
+  const mockPictureService = {
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -42,6 +52,10 @@ describe('CarService', () => {
         {
           provide: CAR_REPOSITORY,
           useValue: mockCarRepository,
+        },
+        {
+          provide: PictureService,
+          useValue: mockPictureService,
         },
       ],
     }).compile();
@@ -98,6 +112,7 @@ describe('CarService', () => {
         brand: 'Toyota',
         model: 'Corolla',
         year: 2022,
+        pictures: [],
       };
 
       mockCarRepository.findOne.mockResolvedValue(expectedCar);
@@ -107,6 +122,7 @@ describe('CarService', () => {
       expect(result).toEqual(expectedCar);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
+        relations: { pictures: true },
       });
     });
 
@@ -135,17 +151,26 @@ describe('CarService', () => {
         color: 'yellow',
       };
 
-      const expectedCar = { ...mockCar, ...updateCarDto };
-      mockCarRepository.update.mockResolvedValue(undefined);
-      mockCarRepository.findOne.mockResolvedValue(expectedCar);
+      const existingCar = {
+        id: carId,
+        brand: 'Toyota',
+        model: 'Corolla',
+        pictures: [],
+      };
+
+      const expectedCar = { ...existingCar, ...updateCarDto };
+
+      mockCarRepository.findOne.mockResolvedValue(existingCar);
+      mockCarRepository.save.mockResolvedValue(expectedCar);
 
       const result = await service.update(carId, updateCarDto);
 
       expect(result).toEqual(expectedCar);
-      expect(mockCarRepository.update).toHaveBeenCalledWith(carId, updateCarDto);
       expect(mockCarRepository.findOne).toHaveBeenCalledWith({
         where: { id: carId },
+        relations: { pictures: true },
       });
+      expect(mockCarRepository.save).toHaveBeenCalledWith(expectedCar);
     });
   });
 
