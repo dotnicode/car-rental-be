@@ -3,14 +3,15 @@ import { PictureService } from './picture.service';
 import { PictureType } from './enums/picture-type.enum';
 import { Repository } from 'typeorm';
 import { Picture } from './entities/picture.entity';
-import { S3StorageService } from '../utils/aws-s3-storage.service';
+import { AWSS3StorageService } from '../utils/aws-s3-storage.service';
 import { CarService } from '../car/car.service';
 import { PICTURE_REPOSITORY } from './providers/picture.provider';
+import { FileType } from 'src/common/enums/file-type.enum';
 
 describe('PictureService', () => {
   let service: PictureService;
   let repository: Repository<Picture>;
-  let storageService: S3StorageService;
+  let storageService: AWSS3StorageService;
   let carService: CarService;
 
   const mockPictureRepository = {
@@ -38,7 +39,7 @@ describe('PictureService', () => {
           useValue: mockPictureRepository,
         },
         {
-          provide: S3StorageService,
+          provide: AWSS3StorageService,
           useValue: mockS3StorageService,
         },
         {
@@ -50,7 +51,7 @@ describe('PictureService', () => {
 
     service = module.get<PictureService>(PictureService);
     repository = module.get<Repository<Picture>>(PICTURE_REPOSITORY);
-    storageService = module.get<S3StorageService>(S3StorageService);
+    storageService = module.get<AWSS3StorageService>(AWSS3StorageService);
     carService = module.get<CarService>(CarService);
   });
 
@@ -82,6 +83,7 @@ describe('PictureService', () => {
       const expectedPicture = {
         id: 1,
         src: uploadResult.fileUrl,
+        fileKey: uploadResult.fileKey,
         ...uploadPictureDto,
         car,
       };
@@ -93,11 +95,12 @@ describe('PictureService', () => {
       const result = await service.upload(mockFile, uploadPictureDto);
 
       expect(mockCarService.findOne).toHaveBeenCalledWith(uploadPictureDto.carId);
-      expect(mockS3StorageService.uploadFile).toHaveBeenCalledWith(mockFile);
+      expect(mockS3StorageService.uploadFile).toHaveBeenCalledWith(mockFile, FileType.PICTURE);
       expect(mockPictureRepository.save).toHaveBeenCalledWith({
         ...uploadPictureDto,
+        fileKey: uploadResult.fileKey,
         src: uploadResult.fileUrl,
-        car: { id: uploadPictureDto.carId },
+        car,
       });
       expect(result).toEqual(expectedPicture);
     });
