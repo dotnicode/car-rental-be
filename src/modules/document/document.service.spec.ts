@@ -6,6 +6,7 @@ import { DocumentService } from './document.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { Document } from './entities/document.entity';
 import { DOCUMENT_REPOSITORY } from './providers/document.provider';
+import { FileType } from 'src/common/enums/file-type.enum';
 
 describe('DocumentService', () => {
   let service: DocumentService;
@@ -39,49 +40,62 @@ describe('DocumentService', () => {
     service = module.get<DocumentService>(DocumentService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('create', () => {
-    it('should create a document', () => {
+    it('should create a document', async () => {
       const file = {
         buffer: Buffer.from('test'),
         originalname: 'test.pdf',
         mimetype: 'application/pdf',
       } as Express.Multer.File;
+
       const createDocumentDto: CreateDocumentDto = {
         title: 'Test Document',
         description: 'Test Description',
       };
 
+      const storageResponse = {
+        fileKey: 'test',
+        fileUrl: 'https://test.com',
+      };
+
+      const documentToSave = {
+        ...createDocumentDto,
+        src: storageResponse.fileKey,
+        url: storageResponse.fileUrl,
+      };
+
       const expectedDocument = {
         id: 'bocajrs',
-        ...createDocumentDto,
+        ...documentToSave,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      mockStorageService.uploadFile.mockResolvedValue({
-        fileKey: 'test',
-        fileUrl: 'https://test.com',
-      });
+      mockStorageService.uploadFile.mockResolvedValue(storageResponse);
       mockDocumentRepository.save.mockResolvedValue(expectedDocument);
 
-      const document = service.create(file, createDocumentDto);
+      const document = await service.create(file, createDocumentDto);
 
       expect(document).toEqual(expectedDocument);
-      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(file);
-      expect(mockDocumentRepository.save).toHaveBeenCalledWith(createDocumentDto);
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(file, FileType.DOCUMENT);
+      expect(mockDocumentRepository.save).toHaveBeenCalledWith(documentToSave);
     });
 
-    it('should throw an error if the file is not a pdf or docx', async () => {
-      const filePDF = {
+    it('should throw an error if the file type is not allowed', async () => {
+      const txtFile = {
         buffer: Buffer.from('test'),
         originalname: 'test.txt',
         mimetype: 'text/plain',
       } as Express.Multer.File;
 
-      const fileDOCX = {
+      const imageFile = {
         buffer: Buffer.from('test'),
-        originalname: 'test.docx',
-        mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        originalname: 'test.jpg',
+        mimetype: 'image/jpeg',
       } as Express.Multer.File;
 
       const createDocumentDto: CreateDocumentDto = {
@@ -90,22 +104,110 @@ describe('DocumentService', () => {
       };
 
       mockStorageService.uploadFile.mockRejectedValue(
-        new BadRequestException('File type not allowed'),
+        new BadRequestException('File type not allowed for document'),
       );
 
-      await expect(service.create(filePDF, createDocumentDto)).rejects.toThrow(BadRequestException);
-      await expect(service.create(fileDOCX, createDocumentDto)).rejects.toThrow(
+      await expect(service.create(txtFile, createDocumentDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(imageFile, createDocumentDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(filePDF);
-      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(fileDOCX);
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(txtFile, FileType.DOCUMENT);
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(imageFile, FileType.DOCUMENT);
       expect(mockDocumentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should accept PDF and DOCX files', async () => {
+      const pdfFile = {
+        buffer: Buffer.from('test'),
+        originalname: 'test.pdf',
+        mimetype: 'application/pdf',
+      } as Express.Multer.File;
+
+      const docxFile = {
+        buffer: Buffer.from('test'),
+        originalname: 'test.docx',
+        mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      } as Express.Multer.File;
+
+      const docFile = {
+        buffer: Buffer.from('test'),
+        originalname: 'test.doc',
+        mimetype: 'application/msword',
+      } as Express.Multer.File;
+
+      const createDocumentDto: CreateDocumentDto = {
+        title: 'Test Document',
+        description: 'Test Description',
+      };
+
+      const storageResponse = {
+        fileKey: 'test',
+        fileUrl: 'https://test.com',
+      };
+
+      const documentToSave = {
+        ...createDocumentDto,
+        src: storageResponse.fileKey,
+        url: storageResponse.fileUrl,
+      };
+
+      const expectedDocument = {
+        id: 'bocajrs',
+        ...documentToSave,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      mockStorageService.uploadFile.mockResolvedValue(storageResponse);
+      mockDocumentRepository.save.mockResolvedValue(expectedDocument);
+
+      await expect(service.create(pdfFile, createDocumentDto)).resolves.toBeDefined();
+      await expect(service.create(docxFile, createDocumentDto)).resolves.toBeDefined();
+      await expect(service.create(docFile, createDocumentDto)).resolves.toBeDefined();
+
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(pdfFile, FileType.DOCUMENT);
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(docxFile, FileType.DOCUMENT);
+      expect(mockStorageService.uploadFile).toHaveBeenCalledWith(docFile, FileType.DOCUMENT);
     });
   });
 
   describe('findAll', () => {
-    it('should return all documents', () => {
-      const documents = service.findAll();
+    it('should return all documents', async () => {
+      const mockDocuments = [
+        {
+          id: '1',
+          title: 'Test Document 1',
+          description: 'Test Description 1',
+          url: 'https://test1.com',
+          src: 'test1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: '2',
+          title: 'Test Document 2',
+          description: 'Test Description 2',
+          url: 'https://test2.com',
+          src: 'test2',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+
+      mockDocumentRepository.find.mockResolvedValue(mockDocuments);
+
+      const documents = await service.findAll();
+
+      expect(mockDocumentRepository.find).toHaveBeenCalled();
+      expect(documents).toEqual(mockDocuments);
+    });
+
+    it('should return empty array when documents are not found', async () => {
+      mockDocumentRepository.find.mockResolvedValue([]);
+
+      const documents = await service.findAll();
+
+      expect(mockDocumentRepository.find).toHaveBeenCalled();
       expect(documents).toEqual([]);
     });
   });
@@ -126,7 +228,9 @@ describe('DocumentService', () => {
 
       const document = await service.findOne('1');
 
-      expect(mockDocumentRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockDocumentRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(document).toEqual(mockDocument);
     });
 
@@ -134,7 +238,9 @@ describe('DocumentService', () => {
       mockDocumentRepository.findOne.mockResolvedValue(null);
 
       await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
-      expect(mockDocumentRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockDocumentRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
     });
   });
 
