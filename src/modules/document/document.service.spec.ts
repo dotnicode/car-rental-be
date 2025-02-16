@@ -210,6 +210,8 @@ describe('DocumentService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         documents: [],
+        rents: [],
+        adminRents: [],
       },
     };
 

@@ -1,4 +1,5 @@
 import { Picture } from 'src/modules/picture/entities/picture.entity';
+import { Rent } from 'src/modules/rent/entities/rent.entity';
 import {
   Column,
   CreateDateColumn,
@@ -39,4 +40,7 @@ export class Car {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Rent, (rent) => rent.car)
+  rents: Rent[];
 }

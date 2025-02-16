@@ -1,15 +1,18 @@
-import { randomUUID } from 'crypto';
 import { FindOptionsRelations, Repository } from 'typeorm';
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
-import { DatabaseException } from '../../common/exceptions/database.exception';
+import { PictureService } from '../picture/picture.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Car } from './entities/car.entity';
-import { CarNotFoundException } from './exceptions/car-not-found.exception';
 import { CAR_REPOSITORY } from './providers/car.provider';
-import { PictureService } from '../picture/picture.service';
 
 @Injectable()
 export class CarService {
@@ -34,12 +37,12 @@ export class CarService {
         where: { id },
         relations,
       });
-      if (!car) throw new CarNotFoundException(id);
+      if (!car) throw new BadRequestException(`Car #${id} not found`);
 
       return car;
     } catch (error) {
-      if (error instanceof CarNotFoundException) throw error;
-      throw new DatabaseException(`Error accessing database: ${error.message}`);
+      if (error instanceof BadRequestException) throw error;
+      throw new InternalServerErrorException(error.message);
     }
   }
 

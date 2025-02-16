@@ -1,15 +1,13 @@
 import { Repository } from 'typeorm';
 
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DatabaseException } from '../../common/exceptions/database.exception';
+import { PictureService } from '../picture/picture.service';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { Car } from './entities/car.entity';
-import { CarNotFoundException } from './exceptions/car-not-found.exception';
 import { CAR_REPOSITORY } from './providers/car.provider';
-import { PictureService } from '../picture/picture.service';
-import { forwardRef } from '@nestjs/common';
 
 describe('CarService', () => {
   let service: CarService;
@@ -27,6 +25,7 @@ describe('CarService', () => {
     pricePerDay: 100,
     createdAt: mockDate,
     updatedAt: mockDate,
+    rents: [],
   };
 
   const mockCarRepository = {
@@ -126,20 +125,20 @@ describe('CarService', () => {
       });
     });
 
-    it('should throw CarNotFoundException if car is not found', async () => {
+    it('should throw BadRequestException if car is not found', async () => {
       const carId = '999';
 
       mockCarRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne(carId)).rejects.toThrow(CarNotFoundException);
+      await expect(service.findOne(carId)).rejects.toThrow(BadRequestException);
     });
 
-    it('should throw DatabaseException for database errors', async () => {
+    it('should throw InternalServerErrorException for database errors', async () => {
       const carId = '1';
 
       mockCarRepository.findOne.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.findOne(carId)).rejects.toThrow(DatabaseException);
+      await expect(service.findOne(carId)).rejects.toThrow(InternalServerErrorException);
     });
   });
 

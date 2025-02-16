@@ -23,6 +23,7 @@ describe('CarController', () => {
     pricePerDay: 100,
     createdAt: mockDate,
     updatedAt: mockDate,
+    rents: [],
   };
 
   const mockCarService = {

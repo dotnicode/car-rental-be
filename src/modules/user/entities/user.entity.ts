@@ -9,6 +9,7 @@ import {
 
 import { Role } from 'src/common/enums/role.enum';
 import { Document } from 'src/modules/document/entities/document.entity';
+import { Rent } from 'src/modules/rent/entities/rent.entity';
 
 @Entity()
 export class User {
@@ -52,7 +53,9 @@ export class User {
   @OneToMany(() => Document, (document) => document.user)
   documents: Document[];
 
-  // Task: relationships will be added soon
-  // @OneToMany(() => Rent, (rent) => rent.user)
-  // rents: Rent[];
+  @OneToMany(() => Rent, (rent) => rent.user)
+  rents: Rent[];
+
+  @OneToMany(() => Rent, (rent) => rent.admin)
+  adminRents: Rent[];
 }

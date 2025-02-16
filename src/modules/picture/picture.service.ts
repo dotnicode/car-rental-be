@@ -1,9 +1,13 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { FileType } from 'src/common/enums/file-type.enum';
-import { DatabaseException } from 'src/common/exceptions/database.exception';
 import { Repository } from 'typeorm';
 import { CarService } from '../car/car.service';
-import { CarNotFoundException } from '../car/exceptions/car-not-found.exception';
 import { AWSS3StorageService } from '../utils/aws-s3-storage.service';
 import { UploadPictureDto } from './dto/upload-picture.dto';
 import { Picture } from './entities/picture.entity';
@@ -32,8 +36,8 @@ export class PictureService {
         car,
       });
     } catch (error) {
-      if (error instanceof CarNotFoundException) throw error;
-      throw new DatabaseException(`Error uploading picture: ${error.message}`);
+      if (error instanceof BadRequestException) throw error;
+      throw new InternalServerErrorException(error.message);
     }
   }
 
