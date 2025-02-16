@@ -60,7 +60,8 @@ export class UserService {
       where: { id, email },
       relations: ['documents'],
     });
-    if (!user) throw new NotFoundException(`User #${id} not found`);
+    if (!user) throw new BadRequestException(`User #${id} not found`);
+
     return user;
   }
 

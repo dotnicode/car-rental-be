@@ -4,7 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToOne,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,22 +15,25 @@ export class Rent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => Car)
+  @ManyToOne(() => Car, (car) => car.rents)
+  @JoinColumn()
   car: Car;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.rents)
+  @JoinColumn()
   user: User;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (admin) => admin.adminRents)
+  @JoinColumn()
   admin: User;
 
   @Column()
   pricePerDay: number;
 
   @Column({ nullable: true })
-  acceptedDate: Date | null;
+  acceptedDate?: Date;
 
-  @Column()
+  @Column({ default: false })
   rejected: boolean;
 
   @Column()

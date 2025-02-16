@@ -16,10 +16,11 @@ export class CreateRentDto {
 
   @IsDate()
   @IsOptional()
-  acceptedDate: Date | null;
+  acceptedDate?: Date;
 
   @IsBoolean()
-  rejected: boolean;
+  @IsOptional()
+  rejected?: boolean;
 
   @IsDate()
   dueDate: Date;
